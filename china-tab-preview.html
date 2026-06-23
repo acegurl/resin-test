@@ -20,10 +20,11 @@ h1{font-size:clamp(22px,4vw,30px);font-weight:700;margin:0 0 22px;letter-spacing
 .section-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--cardEdge),transparent)}
 .section-label .stamp{font-family:var(--mono);font-size:11px;letter-spacing:1px;color:var(--ink-faint);text-transform:none}
 .panel{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--cardEdge);border-radius:18px;padding:22px;margin-bottom:20px}
-.surge{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
-.surge .pct{font-family:var(--mono);font-weight:700;font-size:clamp(34px,6vw,52px);color:var(--pe);line-height:1}
-.surge .cap{font-size:13px;color:var(--ink-dim);max-width:540px;line-height:1.5}
+.surge{display:grid;grid-template-columns:auto 1fr;gap:26px;align-items:center}
+.surge .pct{font-family:var(--mono);font-weight:700;font-size:clamp(40px,6vw,58px);color:var(--pe);line-height:.95;white-space:nowrap}
+.surge .cap{font-size:13px;color:var(--ink-dim);max-width:640px;line-height:1.6}
 .surge .cap b{color:var(--ink)}
+@media(max-width:620px){.surge{grid-template-columns:1fr;gap:12px}}
 .stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:13px;margin-top:18px;align-items:stretch}
 .stat{background:rgba(10,30,40,.5);border:1px solid rgba(255,255,255,.06);border-radius:13px;padding:15px;display:flex;flex-direction:column;min-height:108px}
 .stat .lbl{font-size:10.5px;letter-spacing:1.3px;text-transform:uppercase;color:var(--ink-faint);font-weight:600;min-height:26px}
@@ -61,7 +62,7 @@ table.seasonal td.spark{text-align:center;padding:4px 8px}
 </style></head><body><div class="wrap">
 
 <div class="crumb">Vietnam Plastic Resin Market &middot; Other Markets &middot; <b>China PE Exports</b></div>
-<h1>China PE Exports &mdash; May 2026</h1>
+<h1>China exports</h1>
 
 <div class="section-label">Headline <span class="stamp">China Customs &middot; Jan&ndash;May 2026 &middot; tons</span></div>
 <div class="panel">
@@ -78,21 +79,20 @@ table.seasonal td.spark{text-align:center;padding:4px 8px}
   <div class="foot">Per-destination Jan&ndash;May cumulative, China customs. Bars rescale to the selected year; YoY shown vs prior year. Vietnam highlighted in coral. Top 15 of 35 destinations shown.</div>
 </div>
 
-<div class="section-label">Monthly Volume by Grade <span class="stamp">2025 vs 2026 &middot; tons</span></div>
+<div class="section-label">Monthly Volume by Grade <span class="stamp">Year on year overview</span></div>
 <div class="panel">
   <div class="chart-head"><div class="ttl">Monthly Export Volume</div><div class="chart-meta">2025 (left) vs 2026 (right)</div></div>
   <div class="chart-box"><canvas id="grChart"></canvas></div>
 </div>
 
-<div class="section-label">Export Detail by Grade <span class="stamp">Seasonal &middot; tons</span></div>
+<div class="section-label">Export Detail by Grade <span class="stamp">tons</span></div>
 <div class="panel tbl-panel">
-  <div class="chart-head"><div class="ttl" id="seasTtl">Seasonal Export Volume</div>
+  <div class="chart-head"><div class="ttl" id="seasTtl">PE</div>
     <div class="seg" id="gradeSeg"><button data-g="PE" class="on">PE</button><button data-g="LDPE">LDPE</button><button data-g="HDPE">HDPE</button><button data-g="LLDPE">LLDPE</button></div></div>
   <table class="seasonal"><thead id="seasHead"></thead><tbody id="seasBody"></tbody></table>
   <div class="foot">Years down, months across. The 2026 row shows Jan&ndash;May (later months blank). The sparkline traces each year&rsquo;s within-year monthly shape. <b>Total</b> = source&rsquo;s reported full-year (2022&ndash;2025) / Jan&ndash;May (2026) totals. Source: China customs / official trade data. Reference only.</div>
 </div>
 
-<div class="foot" style="text-align:center;margin-top:24px">SCG &middot; Business Performance &amp; Development &middot; Vietnam Country Office</div>
 </div>
 
 <script>
@@ -125,7 +125,7 @@ const pts=v.map((x,i)=>(i/(v.length-1)*w).toFixed(1)+','+(h-((x-mn)/rng)*h).toFi
 return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><polyline fill="none" stroke="'+col+'" stroke-width="1.5" points="'+pts+'"/></svg>';}
 
 // TRANSPOSED seasonal table: years as ROWS, months across, sparkline column
-const GTITLE={PE:'PE — Seasonal Export Volume',LDPE:'LDPE — Seasonal Export Volume',HDPE:'HDPE — Seasonal Export Volume',LLDPE:'LLDPE — Seasonal Export Volume'};
+const GTITLE={PE:'PE',LDPE:'LDPE',HDPE:'HDPE',LLDPE:'LLDPE'};
 function renderSeasonal(grade){const d=G12[grade];document.getElementById('seasTtl').textContent=GTITLE[grade];
 let h='<tr><th>Year</th>'+MONTHS.map(m=>'<th>'+m+'</th>').join('')+'<th class="spark">Trend</th><th>Total</th></tr>';
 document.getElementById('seasHead').innerHTML=h;
