@@ -276,14 +276,13 @@
         </div>
       </div>
       <div class="ctl">
-        <label>Compares to</label>
-        <div class="row">
+        <div class="row" style="display:none">
           <select id="cmpDate"></select>
-          <button class="resetbtn" id="resetDates">Reset</button>
         </div>
+        <button class="resetbtn" id="resetDates">Reset range</button>
       </div>
     </div>
-    <div class="pick-hint">Drag the range to zoom the chart. Tap a product row to overlay its price line. The table&rsquo;s <b>Change</b> &amp; <b>vs Compare</b> recompute against the selected date.</div>
+    <div class="pick-hint">Drag the range to zoom the chart. Tap a product row to overlay its price line. <b>Chg</b> &amp; <b>vs last</b> compare to the previous session.</div>
   </div>
 
   <div class="panel tbl-panel">
@@ -308,7 +307,7 @@
         <th data-k="country" id="thCountry" style="display:none;text-align:left">Origin <span class="ar"></span></th>
         <th data-k="v">Price <span class="ar"></span></th>
         <th data-k="c">Change <span class="ar"></span></th>
-        <th data-k="vsl" id="thVsl">vs Compare <span class="ar"></span></th>
+        <th data-k="vsl" id="thVsl">vs last <span class="ar"></span></th>
         <th data-k="pw">Pre-war <span class="ar"></span></th>
         <th data-k="ytd">YTD <span class="ar"></span></th>
         <th data-k="yoy">YOY <span class="ar"></span></th>
@@ -486,18 +485,24 @@ function pct(l,b){ if(l==null||b==null||b===0) return null; return Math.round((l
 /* ---- table ---- */
 const tbody=document.getElementById('tblBody');
 function computeRow(m){
-  // latest = value at rEnd (or nearest earlier non-null)
-  const lt=latestAt(m.series, rEnd);
-  const latest=lt.v;
-  // change (absolute, VND) vs the day before 'latest'
-  const prev=lt.i>0?latestAt(m.series, lt.i-1).v:null;
-  const chgAbs = (latest!=null&&prev!=null)?Math.round((latest-prev)*1000):0;
-  // vs compare date
-  const cmpVal=m.series[cmpIdx];
-  const vsl=pct(latest,cmpVal);
+  // latest = value strictly at the latest date (last index)
+  const latest=m.series[NL-1];
+  // If no price today, all computed columns are blank
+  if(latest==null){
+    return {p:m.p, v:null, c:null, mat:m.mat, producer:m.producer||'', country:m.country||'',
+      vsl:null, pw:null, ytd:null, yoy:null, series:m.series, noToday:true};
+  }
+  // previous actual price (nearest earlier non-null before today)
+  const prev=latestAt(m.series, NL-2).v;
+  // change vs previous session; unchanged -> null (shown as '-')
+  let chgAbs=null;
+  if(prev!=null){ const d=Math.round((latest-prev)*1000); chgAbs = d===0 ? null : d; }
+  // vs last (percent vs previous session); unchanged/none -> null
+  let vsl=null;
+  if(prev!=null && prev!==latest){ vsl=pct(latest,prev); }
   return {p:m.p, v:latest, c:chgAbs, mat:m.mat, producer:m.producer||'', country:m.country||'',
     vsl:vsl, pw:pct(latest,m.pwBase), ytd:pct(latest,m.ytdBase), yoy:pct(latest,m.yoyBase),
-    series:m.series};
+    series:m.series, noToday:false};
 }
 let tblMat='PP', tblSub=null;
 function currentTableRows(){
@@ -528,8 +533,8 @@ function renderTable(){
   document.getElementById('thCountry').style.display=showCtry?'':'none';
   tbody.innerHTML=rows.map(r=>{
     const isOv=overlay===r.p;
-    const chgTxt = r.c===0?'0':Math.abs(r.c).toLocaleString();
     const gc=gradeColor(r);
+    const chgCellHtml = r.c==null ? '<span class="muted">&mdash;</span>' : chgToken(r.c, Math.abs(r.c).toLocaleString(), true);
     const prodCell = showProd ? '<td style="color:var(--ink-dim);text-align:left">'+(r.producer||'<span class="muted">&mdash;</span>')+'</td>' : '';
     const ctryCell = showCtry ? '<td style="color:var(--ink-dim);text-align:left">'+(r.country||'<span class="muted">&mdash;</span>')+'</td>' : '';
     return '<tr data-p="'+r.p+'" style="cursor:pointer;'+(isOv?'background:rgba(20,50,65,.06)':'')+'">'+
@@ -537,7 +542,7 @@ function renderTable(){
         '<span style="color:'+gc+';font-weight:600">'+r.p+'</span></td>'+
       prodCell+ctryCell+
       '<td>'+(r.v!=null?Math.round(r.v*1000).toLocaleString('en-US'):'<span class="muted">&mdash;</span>')+'</td>'+
-      '<td>'+chgToken(r.c, chgTxt, true)+'</td>'+
+      '<td>'+chgCellHtml+'</td>'+
       '<td>'+pctToken(r.vsl)+'</td>'+
       '<td>'+pctToken(r.pw)+'</td>'+
       '<td>'+pctToken(r.ytd)+'</td>'+
@@ -605,7 +610,7 @@ function syncRange(){
   rStart=a; rEnd=b;
   updRangeLabels(); buildChart(); renderTable();
 }
-function updCmpHead(){document.getElementById('thVsl').firstChild.textContent='vs '+L[cmpIdx]+' ';}
+function updCmpHead(){document.getElementById('thVsl').firstChild.textContent='vs last ';}
 function setupDateControls(){
   rangeStart=document.getElementById('rangeStart'); rangeEnd=document.getElementById('rangeEnd');
   cmpSel=document.getElementById('cmpDate');
@@ -809,16 +814,21 @@ async function buildPDF(){
       header(mat+' - All Grades', list.length+' products  -  '+L[0]+' to '+L[L.length-1]);
       let yy=46;
       const rows=list.map(m=>{
-        const s=m.series; const nn=s.map((v,i)=>[v,i]).filter(p=>p[0]!=null);
-        const latest=nn.length?nn[nn.length-1][0]:null;
-        const prev=nn.length>=2?nn[nn.length-2][0]:null;
-        const chg=(latest!=null&&prev!=null)?Math.round((latest-prev)*1000):0;
+        const s=m.series;
+        const latest=s[L.length-1];  // strictly today's price
         const pct=(l,b)=>(l==null||b==null||b===0)?null:Math.round((l-b)/b*10000)/100;
-        return {p:m.p, producer:m.producer||'', country:m.country||'', v:latest, c:chg, vsl:pct(latest,s[L.length-2]),
+        if(latest==null){
+          return {p:m.p, producer:m.producer||'', country:m.country||'', v:null, c:null, vsl:null, pw:null, ytd:null, yoy:null};
+        }
+        // previous actual price before today
+        let prev=null; for(let i=L.length-2;i>=0;i--){ if(s[i]!=null){prev=s[i];break;} }
+        let chg=null; if(prev!=null){ const d=Math.round((latest-prev)*1000); chg = d===0?null:d; }
+        let vsl=null; if(prev!=null && prev!==latest){ vsl=pct(latest,prev); }
+        return {p:m.p, producer:m.producer||'', country:m.country||'', v:latest, c:chg, vsl:vsl,
           pw:pct(latest,m.pwBase), ytd:pct(latest,m.ytdBase), yoy:pct(latest,m.yoyBase)};
       });
       const cw=[38,26,20,18,16,18,16,15,15];
-      const heads=['Grade','Producer','Origin','Price','Chg','vs '+(L[L.length-2]||'prev'),'Pre-war','YTD','YOY'];
+      const heads=['Grade','Producer','Origin','Price','Chg','vs last','Pre-war','YTD','YOY'];
       const aligns=['l','l','l','r','r','r','r','r','r'];
       const keys=['p','producer','country','v','c','vsl','pw','ytd','yoy'];
       const totalW=cw.reduce((a,b)=>a+b,0); const x0=M; const rowH=6.1;
@@ -850,7 +860,7 @@ async function buildPDF(){
         // price
         doc.setTextColor(INK[0],INK[1],INK[2]);
         doc.text(r.v!=null?Math.round(r.v*1000).toLocaleString('en-US'):'-',xL[3]+cw[3]-2,by,{align:'right'});
-        chgCell(r.c===0?null:r.c,null,xL[4]+cw[4]-2,by);
+        chgCell(r.c,null,xL[4]+cw[4]-2,by);
         chgCell(r.vsl,'%',xL[5]+cw[5]-2,by);
         chgCell(r.pw,'%',xL[6]+cw[6]-2,by);
         chgCell(r.ytd,'%',xL[7]+cw[7]-2,by);
