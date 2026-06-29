@@ -1,40 +1,140 @@
 {
-  "labels": ["6/25/2026", "6/26/2026"],
+  "labels": [
+    "5/22/2025",
+    "5/23/2025",
+    "5/26/2025",
+    "5/27/2025",
+    "5/28/2025",
+    "5/29/2025",
+    "5/30/2025",
+    "6/2/2025",
+    "6/3/2025",
+    "6/4/2025",
+    "6/5/2025",
+    "6/6/2025",
+    "6/9/2025",
+    "6/10/2025",
+    "6/11/2025",
+    "6/12/2025",
+    "6/13/2025",
+    "6/16/2025",
+    "6/17/2025",
+    "6/18/2025",
+    "6/19/2025",
+    "6/20/2025",
+    "6/23/2025",
+    "6/24/2025",
+    "6/25/2025",
+    "12/31/2025",
+    "1/5/2026",
+    "1/6/2026",
+    "1/7/2026",
+    "2/26/2026",
+    "2/27/2026",
+    "3/23/2026",
+    "3/24/2026",
+    "3/25/2026",
+    "3/26/2026",
+    "3/27/2026",
+    "3/30/2026",
+    "3/31/2026",
+    "4/1/2026",
+    "4/2/2026",
+    "4/3/2026",
+    "4/6/2026",
+    "4/7/2026",
+    "4/8/2026",
+    "4/9/2026",
+    "4/10/2026",
+    "4/13/2026",
+    "4/14/2026",
+    "4/15/2026",
+    "4/16/2026",
+    "4/17/2026",
+    "4/20/2026",
+    "4/21/2026",
+    "4/22/2026",
+    "4/23/2026",
+    "4/24/2026",
+    "4/28/2026",
+    "4/29/2026",
+    "5/4/2026",
+    "5/5/2026",
+    "5/6/2026",
+    "5/7/2026",
+    "5/8/2026",
+    "5/11/2026",
+    "5/12/2026",
+    "5/13/2026",
+    "5/14/2026",
+    "5/15/2026",
+    "5/18/2026",
+    "5/19/2026",
+    "5/20/2026",
+    "5/21/2026",
+    "5/22/2026",
+    "5/25/2026",
+    "5/26/2026",
+    "5/27/2026",
+    "5/28/2026",
+    "5/29/2026",
+    "6/1/2026",
+    "6/2/2026",
+    "6/3/2026",
+    "6/4/2026",
+    "6/5/2026",
+    "6/8/2026",
+    "6/9/2026",
+    "6/10/2026",
+    "6/11/2026",
+    "6/12/2026",
+    "6/15/2026",
+    "6/16/2026",
+    "6/17/2026",
+    "6/18/2026",
+    "6/19/2026",
+    "6/22/2026",
+    "6/23/2026",
+    "6/24/2026",
+    "6/25/2026",
+    "6/26/2026",
+    "6/29/2026"
+  ],
   "summary": {
     "subcats": {
-      "PP injection": {
-        "avg": 33500,
-        "delta": -900
-      },
-      "PP yarn": {
-        "avg": 34914,
-        "delta": -214
-      },
-      "PP copo": {
-        "avg": 35667,
-        "delta": -433
-      },
       "HD blow": {
-        "avg": 37500,
-        "delta": -2000
+        "avg": 35500,
+        "delta": 0
       },
       "HD film": {
-        "avg": 37333,
-        "delta": 0
+        "avg": 36675,
+        "delta": -658
       },
       "HD yarn": {
         "avg": 38500,
         "delta": 0
       },
       "LL film": {
-        "avg": 33500,
-        "delta": 0
+        "avg": 33338,
+        "delta": -162
+      },
+      "PP copo": {
+        "avg": 35067,
+        "delta": -167
+      },
+      "PP injection": {
+        "avg": 32000,
+        "delta": -600
+      },
+      "PP yarn": {
+        "avg": 34143,
+        "delta": -557
       }
     },
-    "changed": 15,
-    "total": 50,
-    "largest": -2000,
-    "largest_items": "HDPE Blow 5502BN"
+    "changed": 0,
+    "total": 53,
+    "largest": -658,
+    "largest_items": "HD film"
   },
   "products": {
     "PP": [],
@@ -66,7 +166,35 @@
     }
   },
   "editorial": {
-    "overview": {},
+    "overview": {
+      "PE": {
+        "sub": "Import pressure from US cargoes continues; domestic downside pressure persists despite cautious adjustments",
+        "bullets": [
+          "Asia PE import activity declined sharply; Vietnam showing lowest regional offer prices",
+          "US PE offers at USD 850-880/tonne/CIF for LLDPE; HDPE at USD 930-970/tonne/CIF",
+          "Sabic settlement prices (Saudi) fell very sharply but buyers remain cautious on small orders",
+          "Domestic PE: LLDPE Film VND 32,000-33,000/kg; HDPE Film/blow VND 34,000-35,000/kg"
+        ]
+      },
+      "PP": {
+        "sub": "South Korean competitive pressure intensifies; Sabic July settlement at USD 1,020/tonne; domestic prices down VND 500-1,000/kg",
+        "bullets": [
+          "Asian PP homo fell sharply USD 90-130/tonne; buyers cautious on expectations of further declines",
+          "S-Oil Korea PP yarn/injection settlement: USD 1,020/tonne/CIF (down USD 20 vs prior week)",
+          "Domestic: NSRP PP 114G VND 31,000/kg (down VND 500); BSR T3034 down VND 1,000 to VND 31,400/kg",
+          "Hanwha Korea PP HJ500 remains cheapest at VND 30,000/kg for early July arrival"
+        ]
+      },
+      "PVC": {
+        "sub": "Abundant regional supply pressures prices; domestic coal-based SG-5 steady at VND 20,500/kg; oil-based AGC Vina at VND 20,900/kg",
+        "bullets": [
+          "Asian PVC prices fell to USD 690-720/tonne/CFR; imported prices into Vietnam USD 670-700/tonne/CIF",
+          "China consumption recovery slow post-Dragon Boat holiday; price cuts to stimulate demand",
+          "Domestic: Coal-based PVC SG-5 VND 20,500/kg; oil-based AGC Vina VND 20,900/kg (prices holding)",
+          "Higher-priced segment: Shintech USA SE950/SE1000 at VND 21,500/kg shows significant competitive pressure"
+        ]
+      }
+    },
     "regional": []
   }
 }
