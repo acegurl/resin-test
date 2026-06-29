@@ -256,7 +256,7 @@
 
   <div class="panel chart-panel">
     <div class="chart-head">
-      <h2 style="margin:0">Price Trend &middot; subcategory average</h2>
+      <h2 style="margin:0">Price Trend</h2>
       <div class="seg" id="grpSeg"></div>
     </div>
     <div class="chart-meta" id="chartMeta"></div>
@@ -457,7 +457,7 @@ function buildChart(){
   }
   const cfg={type:'line',data:{labels:labs,datasets:ds},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
-      plugins:{legend:{labels:{color:'#4a6470',font:{family:'SCG',size:12},usePointStyle:true,pointStyleWidth:8}},
+      plugins:{legend:{display:false},
         tooltip:{backgroundColor:'#ffffff',borderColor:col,borderWidth:1,titleColor:'#15323f',bodyColor:'#4a6470',padding:10,
           callbacks:{label:c=>' '+c.dataset.label+': '+(c.parsed.y!=null?c.parsed.y.toFixed(1)+'k VND/kg':'\u2014')}}},
       scales:{x:{grid:{color:'rgba(20,50,65,.08)'},ticks:{color:'#7d97a1',font:{family:'SCG',size:10},maxTicksLimit:11,autoSkip:true}},
@@ -533,7 +533,7 @@ function renderTable(){
     const prodCell = showProd ? '<td style="color:var(--ink-dim);text-align:left">'+(r.producer||'<span class="muted">&mdash;</span>')+'</td>' : '';
     const ctryCell = showCtry ? '<td style="color:var(--ink-dim);text-align:left">'+(r.country||'<span class="muted">&mdash;</span>')+'</td>' : '';
     return '<tr data-p="'+r.p+'" style="cursor:pointer;'+(isOv?'background:rgba(20,50,65,.06)':'')+'">'+
-      '<td style="border-left:3px solid '+gc+'"><span class="tag" style="background:'+gc+'"></span>'+
+      '<td><span class="tag" style="background:'+gc+'"></span>'+
         '<span style="color:'+gc+';font-weight:600">'+r.p+'</span></td>'+
       prodCell+ctryCell+
       '<td>'+(r.v!=null?Math.round(r.v*1000).toLocaleString('en-US'):'<span class="muted">&mdash;</span>')+'</td>'+
@@ -663,7 +663,7 @@ function offscreenChart(group){
       data:{labels:L, datasets:[{label:group+' average', data:DATA.groupavg[group],
         borderColor:col, backgroundColor:col+'22', borderWidth:3, pointRadius:0, tension:.32, fill:true, spanGaps:true}]},
       options:{responsive:false, animation:false, devicePixelRatio:1.5,
-        plugins:{legend:{labels:{color:'#234',font:{size:20}}}},
+        plugins:{legend:{display:false}},
         scales:{x:{grid:{color:'rgba(0,0,0,.06)'},ticks:{color:'#567',font:{size:15},maxTicksLimit:12}},
           y:{grid:{color:'rgba(0,0,0,.08)'},ticks:{color:'#567',font:{size:15},callback:v=>v+'k'}}}},
       plugins:[whiteBg]
@@ -777,11 +777,14 @@ async function buildPDF(){
       const it=S[cat]; if(!it) return;
       const col=SUBCOL[cat]||[0,112,192];
       const cx=M+(i%3)*(cardW+6), cy=y+Math.floor(i/3)*(cardH+5);
-      doc.setFillColor(250,251,252); doc.setDrawColor(col[0],col[1],col[2]); doc.setLineWidth(.4); doc.roundedRect(cx,cy,cardW,cardH,2,2,'FD');
-      F('bold'); doc.setFontSize(7); doc.setTextColor(FAINT[0],FAINT[1],FAINT[2]); doc.text(cat.toUpperCase(),cx+4,cy+6);
+      // light grey card (matches dashboard): subtle fill + light border
+      doc.setFillColor(248,250,251); doc.setDrawColor(223,229,233); doc.setLineWidth(.4); doc.roundedRect(cx,cy,cardW,cardH,2.5,2.5,'FD');
+      // colored dot before label
+      doc.setFillColor(col[0],col[1],col[2]); doc.circle(cx+5,cy+4.6,1.3,'F');
+      F('bold'); doc.setFontSize(7); doc.setTextColor(FAINT[0],FAINT[1],FAINT[2]); doc.text(cat.toUpperCase(),cx+8.5,cy+6);
       F('bold'); doc.setFontSize(14); doc.setTextColor(INK[0],INK[1],INK[2]); doc.text((it.avg||0).toLocaleString('en-US'),cx+4,cy+14);
-      chgCell(it.delta,null,cx+cardW-4,cy+19);
       F('normal'); doc.setFontSize(6.5); doc.setTextColor(DIM[0],DIM[1],DIM[2]); doc.text('vs last',cx+4,cy+19);
+      chgCell(it.delta,null,cx+cardW-4,cy+19);
     });
     doc.setLineWidth(.2);
     y+=Math.ceil(SUBS.length/3)*(cardH+5)+3;
@@ -789,10 +792,10 @@ async function buildPDF(){
     const REG=(ED.regional||[]).map(r=>[r.l, r.v, r.d]);
     const rcW=(W-2*M-3*5)/4, rcH=18;
     REG.forEach((r,i)=>{ const cx=M+(i%4)*(rcW+5), cy=y+Math.floor(i/4)*(rcH+5);
-      doc.setFillColor(247,250,251); doc.setDrawColor(228); doc.roundedRect(cx,cy,rcW,rcH,2,2,'FD');
-      F('bold');doc.setFontSize(6.6);doc.setTextColor(FAINT[0],FAINT[1],FAINT[2]);
+      doc.setFillColor(248,250,251); doc.setDrawColor(223,229,233); doc.roundedRect(cx,cy,rcW,rcH,2.5,2.5,'FD');
+      F('bold');doc.setFontSize(6.4);doc.setTextColor(FAINT[0],FAINT[1],FAINT[2]);
       T(doc.splitTextToSize(SAFE(r[0]).toUpperCase(),rcW-4),cx+3,cy+5);
-      F('bold');doc.setFontSize(11);doc.setTextColor(INK[0],INK[1],INK[2]);T(r[1],cx+3,cy+12);
+      F('bold');doc.setFontSize(10.5);doc.setTextColor(INK[0],INK[1],INK[2]);T(r[1],cx+3,cy+12);
       chgCell(r[2],null,cx+rcW-3,cy+16);
     });
     footer(1);
@@ -811,35 +814,47 @@ async function buildPDF(){
         const prev=nn.length>=2?nn[nn.length-2][0]:null;
         const chg=(latest!=null&&prev!=null)?Math.round((latest-prev)*1000):0;
         const pct=(l,b)=>(l==null||b==null||b===0)?null:Math.round((l-b)/b*10000)/100;
-        return {p:m.p, v:latest, c:chg, vsl:pct(latest,s[L.length-2]),
+        return {p:m.p, producer:m.producer||'', country:m.country||'', v:latest, c:chg, vsl:pct(latest,s[L.length-2]),
           pw:pct(latest,m.pwBase), ytd:pct(latest,m.ytdBase), yoy:pct(latest,m.yoyBase)};
       });
-      const cw=[54,22,22,26,22,20,16];
-      const heads=['Grade','Price','Chg','vs '+(L[L.length-2]||'prev'),'Pre-war','YTD','YOY'];
-      const aligns=['l','r','r','r','r','r','r'];
+      const cw=[38,26,20,18,16,18,16,15,15];
+      const heads=['Grade','Producer','Origin','Price','Chg','vs '+(L[L.length-2]||'prev'),'Pre-war','YTD','YOY'];
+      const aligns=['l','l','l','r','r','r','r','r','r'];
+      const keys=['p','producer','country','v','c','vsl','pw','ytd','yoy'];
       const totalW=cw.reduce((a,b)=>a+b,0); const x0=M; const rowH=6.1;
       const xL=[]; let acc=x0; cw.forEach(w=>{xL.push(acc);acc+=w;});
       doc.setFillColor(13,39,51); doc.rect(x0,yy,totalW,7,'F');
-      F('bold'); doc.setFontSize(7.6); doc.setTextColor(255,255,255);
+      F('bold'); doc.setFontSize(7); doc.setTextColor(255,255,255);
       heads.forEach((h,i)=>{ const tx=aligns[i]==='l'?xL[i]+2:xL[i]+cw[i]-2; doc.text(h,tx,yy+4.7,{align:aligns[i]==='l'?'left':'right'}); });
       yy+=7;
       rows.forEach((r,idx)=>{
         if(yy>H-16){ footer(pageNo++); doc.addPage(); header(mat+' - All Grades (cont)',''); yy=46;
-          doc.setFillColor(13,39,51); doc.rect(x0,yy,totalW,7,'F'); F('bold'); doc.setFontSize(7.6); doc.setTextColor(255,255,255);
+          doc.setFillColor(13,39,51); doc.rect(x0,yy,totalW,7,'F'); F('bold'); doc.setFontSize(7); doc.setTextColor(255,255,255);
           heads.forEach((h,i)=>{ const tx=aligns[i]==='l'?xL[i]+2:xL[i]+cw[i]-2; doc.text(h,tx,yy+4.7,{align:aligns[i]==='l'?'left':'right'}); }); yy+=7; }
         if(idx%2===0){doc.setFillColor(247,250,251);doc.rect(x0,yy,totalW,rowH,'F');}
         const by=yy+4.1;
-        F('normal'); doc.setFontSize(7.4); doc.setTextColor(INK[0],INK[1],INK[2]);
+        // grade (clip)
+        F('normal'); doc.setFontSize(7); doc.setTextColor(INK[0],INK[1],INK[2]);
         let nm=SAFE(r.p); while(doc.getTextWidth(nm)>cw[0]-3 && nm.length>4){ nm=nm.slice(0,-1); }
         if(nm!==SAFE(r.p)) nm=nm.slice(0,-1)+'.';
         doc.text(nm,xL[0]+2,by);
+        // producer (clip)
+        doc.setTextColor(DIM[0],DIM[1],DIM[2]);
+        let pr=SAFE(r.producer)||'-'; while(doc.getTextWidth(pr)>cw[1]-3 && pr.length>3){ pr=pr.slice(0,-1); }
+        if(pr!==(SAFE(r.producer)||'-')) pr=pr.slice(0,-1)+'.';
+        doc.text(pr,xL[1]+2,by);
+        // origin (clip)
+        let ct=SAFE(r.country)||'-'; while(doc.getTextWidth(ct)>cw[2]-3 && ct.length>3){ ct=ct.slice(0,-1); }
+        if(ct!==(SAFE(r.country)||'-')) ct=ct.slice(0,-1)+'.';
+        doc.text(ct,xL[2]+2,by);
+        // price
         doc.setTextColor(INK[0],INK[1],INK[2]);
-        doc.text(r.v!=null?Math.round(r.v*1000).toLocaleString('en-US'):'-',xL[1]+cw[1]-2,by,{align:'right'});
-        chgCell(r.c===0?null:r.c,null,xL[2]+cw[2]-2,by);
-        chgCell(r.vsl,'%',xL[3]+cw[3]-2,by);
-        chgCell(r.pw,'%',xL[4]+cw[4]-2,by);
-        chgCell(r.ytd,'%',xL[5]+cw[5]-2,by);
-        chgCell(r.yoy,'%',xL[6]+cw[6]-2,by);
+        doc.text(r.v!=null?Math.round(r.v*1000).toLocaleString('en-US'):'-',xL[3]+cw[3]-2,by,{align:'right'});
+        chgCell(r.c===0?null:r.c,null,xL[4]+cw[4]-2,by);
+        chgCell(r.vsl,'%',xL[5]+cw[5]-2,by);
+        chgCell(r.pw,'%',xL[6]+cw[6]-2,by);
+        chgCell(r.ytd,'%',xL[7]+cw[7]-2,by);
+        chgCell(r.yoy,'%',xL[8]+cw[8]-2,by);
         yy+=rowH;
       });
       footer(pageNo++);
