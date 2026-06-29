@@ -83,7 +83,10 @@
 
   .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
   @media(max-width:900px){.stats{grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:9px}}
-  .stat{background:rgba(20,50,65,.04);border:1px solid rgba(20,50,65,.09);border-radius:13px;padding:15px 15px 14px;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+  .stat{background:rgba(20,50,65,.04);border:1px solid rgba(20,50,65,.09);border-left:4px solid transparent;border-radius:13px;padding:15px 15px 14px;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+  .stat[data-g*="PP"]{border-left-color:#0070C0;background:rgba(0,112,192,.06)}
+  .stat[data-g*="HD"]{border-left-color:#C00000;background:rgba(192,0,0,.06)}
+  .stat[data-g*="LL"]{border-left-color:#FFA500;background:rgba(255,165,0,.06)}
   .stat:hover{border-color:var(--cardEdge);transform:translateY(-2px)}
   .stat.active{border-color:var(--coral);box-shadow:0 0 0 1px var(--coral) inset}
   .stat .lbl{font-size:10.5px;letter-spacing:1.3px;text-transform:uppercase;color:var(--ink-faint);font-weight:600}
@@ -223,7 +226,7 @@
       <div id="overview"></div>
     </div>
     <div class="panel">
-      <h2>Subcategory Average &middot; VND/kg</h2>
+      <h2>Average &middot; VND/kg</h2>
       <div class="stats" id="statRow"></div>
       <div class="stats-2">
         <div class="stat" style="cursor:default">
@@ -420,7 +423,7 @@ const sr=document.getElementById('statRow');
 Object.entries(GROUPS).forEach(([g,o])=>{
   const card=document.createElement('div');
   card.className='stat'+(g===activeGroup?' active':''); card.dataset.g=g;
-  card.innerHTML='<div class="lbl">'+o.label+' avg price</div>'+
+  card.innerHTML='<div class="lbl">'+o.label.toUpperCase()+'</div>'+
     '<div class="big">'+o.avg.toLocaleString('en-US')+'</div>'+
     '<div class="delta">'+chgToken(o.delta, Math.abs(o.delta).toLocaleString()+' vs last', false)+'</div>';
   card.onclick=()=>selectGroup(g);
