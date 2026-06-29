@@ -81,7 +81,8 @@
   .ov-body li{list-style:none;font-size:13.2px;line-height:1.55;padding-left:18px;position:relative;margin:5px 0;opacity:.92}
   .ov-body li::before{content:'';position:absolute;left:3px;top:8px;width:5px;height:5px;border-radius:50%;background:var(--secCol,var(--coral-soft));opacity:.95}
 
-  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+  @media(max-width:900px){.stats{grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:9px}}
   .stat{background:rgba(20,50,65,.04);border:1px solid rgba(20,50,65,.09);border-radius:13px;padding:15px 15px 14px;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
   .stat:hover{border-color:var(--cardEdge);transform:translateY(-2px)}
   .stat.active{border-color:var(--coral);box-shadow:0 0 0 1px var(--coral) inset}
@@ -104,10 +105,12 @@
 
   .chart-panel{margin-top:14px}
   .chart-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:6px}
-  .seg{display:inline-flex;background:rgba(20,50,65,.05);border:1px solid rgba(20,50,65,.12);border-radius:11px;padding:4px;gap:3px}
+  .seg{display:inline-flex;background:rgba(20,50,65,.05);border:1px solid rgba(20,50,65,.12);border-radius:11px;padding:4px;gap:3px;flex-wrap:wrap}
   .seg button{font-weight:600;font-size:12.5px;color:var(--ink-dim);background:none;border:none;padding:7px 15px;border-radius:8px;cursor:pointer;transition:.18s;letter-spacing:.4px}
-  .seg button.on{color:#ffffff}
-  .seg button.on.pp{background:var(--pp)} .seg button.on.pe{background:var(--pe)} .seg button.on.pvc{background:var(--pvc)}
+  .seg button.on{color:#ffffff;font-weight:700}
+  .seg button[data-g*="PP"].on{background:#0070C0}
+  .seg button[data-g*="HD"].on{background:#C00000}
+  .seg button[data-g*="LL"].on{background:#FFA500}
   .chart-meta{font-size:11.5px;color:var(--ink-faint);font-family:var(--mono)}
   .chart-box{position:relative;height:300px;margin-top:8px}
   .pick-hint{font-size:11.5px;color:var(--ink-faint);margin-top:4px}
@@ -166,29 +169,6 @@
   .rpt-overlay.open{display:flex;animation:fade .2s ease}
   @keyframes fade{from{opacity:0}to{opacity:1}}
   .rpt-modal{width:min(760px,100%);max-height:88vh;display:flex;flex-direction:column;background:#ffffff;border:1px solid var(--cardEdge);border-radius:18px;box-shadow:0 30px 80px -30px rgba(20,50,65,.35);overflow:hidden;animation:rise .25s ease}
-  .tabs{display:flex;gap:8px;margin:0 0 20px;border-bottom:1px solid var(--cardEdge);padding:0 0 12px}
-  .tabs button{padding:8px 16px;border:none;background:none;font-family:inherit;font-weight:600;font-size:13.5px;color:var(--ink-dim);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-12px;transition:all .2s}
-  .tabs button.active{color:var(--ink);border-color:var(--pe)}
-  .tabs button:hover{color:var(--ink)}
-  .view-section{display:none}
-  .view-section.active{display:block}
-  .dark-section{background:#0a1f2e;border-radius:12px;padding:24px;color:#dae6ed;min-height:60vh}
-  .dark-section h2{color:#ffffff;font-size:20px;margin-bottom:16px}
-  .dark-section .sub{color:#8fa5b3;font-size:13px;margin-bottom:20px}
-  .china-filter{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
-  .china-filter button{padding:8px 14px;border:1px solid #2a4d62;background:#0f2b38;color:#8fa5b3;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:all .2s}
-  .china-filter button.active{background:var(--pe);border-color:var(--pe);color:#ffffff}
-  .china-filter button:hover{border-color:#4a7a95;background:#1a3a47}
-  .china-chart-wrap{background:#0f2b38;border-radius:8px;padding:16px;margin:16px 0;height:400px;position:relative}
-  .china-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:16px 0}
-  .china-stat-card{background:#0f2b38;padding:14px;border-radius:8px;border-left:3px solid var(--pe)}
-  .china-stat-card .label{color:#8fa5b3;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
-  .china-stat-card .value{color:#ffffff;font-size:18px;font-weight:700;margin-top:4px}
-  .china-stat-card .delta{font-size:12px;margin-top:6px;color:#46d6a0}
-  .china-stat-card .delta.neg{color:#ff6274}
-  .china-cards-responsive{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:20px 0}
-  @media(max-width:1200px){.china-cards-responsive{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:768px){.china-cards-responsive{grid-template-columns:1fr}}
   @keyframes rise{from{transform:translateY(14px);opacity:.6}to{transform:translateY(0);opacity:1}}
   .rpt-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 0}
   .rpt-tabs{display:inline-flex;background:rgba(20,50,65,.05);border:1px solid rgba(20,50,65,.12);border-radius:11px;padding:4px;gap:3px}
@@ -231,13 +211,7 @@
     </div>
   </div>
 
-  <div class="tabs">
-    <button class="tab-btn active" data-tab="daily-prices">Daily Prices</button>
-    <button class="tab-btn" data-tab="china-imports">China Imports</button>
-  </div>
-
-  <div id="daily-prices">
-    <div class="panel">>
+  <div class="grid top">
     <div class="panel">
       <div class="panel-head">
         <h2>Market Overview</h2>
@@ -249,7 +223,7 @@
       <div id="overview"></div>
     </div>
     <div class="panel">
-      <h2>Domestic Average &middot; VND/kg</h2>
+      <h2>Subcategory Average &middot; VND/kg</h2>
       <div class="stats" id="statRow"></div>
       <div class="stats-2">
         <div class="stat" style="cursor:default">
@@ -276,11 +250,15 @@
 
   <div class="panel chart-panel">
     <div class="chart-head">
-      <h2 style="margin:0">Price Trend &middot; group average</h2>
+      <h2 style="margin:0">Price Trend &middot; subcategory average</h2>
       <div class="seg" id="grpSeg">
-        <button data-g="PP" class="on pp">PP</button>
-        <button data-g="PE" class="pe">PE</button>
-        <button data-g="PVC" class="pvc">PVC</button>
+        <button data-g="PP injection" class="on">PP injection</button>
+        <button data-g="PP yarn">PP yarn</button>
+        <button data-g="PP copo">PP copo</button>
+        <button data-g="HD blow">HD blow</button>
+        <button data-g="HD film">HD film</button>
+        <button data-g="HD yarn">HD yarn</button>
+        <button data-g="LL film">LL film</button>
       </div>
     </div>
     <div class="chart-meta" id="chartMeta"></div>
@@ -353,42 +331,6 @@
   </div>
 </div>
 
-
-  
-  </div><!-- end daily-prices -->
-
-  <div id="chinaImportsSection" style="display:none;margin-top:20px">
-    <div style="background:#0a1f2e;border-radius:12px;padding:24px;color:#dae6ed">
-      <!-- Polymer tabs: PE / PP / PVC -->
-      <div style="display:flex;gap:8px;margin-bottom:20px;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:12px">
-        <button class="china-polymer-tab active" data-polymer="PE" style="padding:8px 16px;border:none;background:none;color:#ffffff;font-weight:600;font-size:13.5px;cursor:pointer;border-bottom:2px solid #c00000;margin-bottom:-12px">PE Exports</button>
-        <button class="china-polymer-tab" data-polymer="PP" style="padding:8px 16px;border:none;background:none;color:#8fa5b3;font-weight:600;font-size:13.5px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-12px">PP Exports</button>
-        <button class="china-polymer-tab" data-polymer="PVC" style="padding:8px 16px;border:none;background:none;color:#8fa5b3;font-weight:600;font-size:13.5px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-12px">PVC Exports</button>
-      </div>
-      
-      <h2 id="chinaPolymerTitle" style="color:#ffffff;font-size:20px;margin-bottom:16px">China PE Exports · Grade Overview</h2>
-      <div id="chinaPolymerDesc" style="color:#8fa5b3;font-size:13px;margin-bottom:20px">May 2026 volumes by PE grade | 36-month trend sparklines | Top 3 destinations per grade</div>
-      
-      <!-- Grade toggle buttons (PE only) -->
-      <div id="chinaGradeButtons" style="display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap">
-        <button class="china-grade-btn active" data-grade="PE" style="padding:8px 14px;border:1px solid #2a4d62;background:#0f2b38;color:#8fa5b3;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:all .2s">PE</button>
-        <button class="china-grade-btn" data-grade="LDPE" style="padding:8px 14px;border:1px solid #2a4d62;background:#0f2b38;color:#8fa5b3;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:all .2s">LDPE</button>
-        <button class="china-grade-btn" data-grade="HDPE" style="padding:8px 14px;border:1px solid #2a4d62;background:#0f2b38;color:#8fa5b3;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:all .2s">HDPE</button>
-        <button class="china-grade-btn" data-grade="LLDPE" style="padding:8px 14px;border:1px solid #2a4d62;background:#0f2b38;color:#8fa5b3;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:all .2s">LLDPE</button>
-        <button class="china-grade-btn" data-grade="ALL" style="padding:8px 14px;border:1px solid #2a4d62;background:#0f2b38;color:#8fa5b3;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:all .2s">All Grades</button>
-      </div>
-
-      <!-- Cards grid -->
-      <div id="chinaCardsGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:20px 0" class="china-cards-responsive"></div>
-      
-      <!-- Destination summary section -->
-      <div style="margin-top:32px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.1)">
-        <h3 style="color:#ffffff;font-size:16px;margin-bottom:12px">Top Destinations · May 2026</h3>
-        <div id="chinaDestinationSummary" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px"></div>
-      </div>
-    </div>
-  </div>
-
 <script>
 // Data is loaded from data.json at runtime (see init() at the bottom).
 let DATA=null, REPORTS=null, S=null, L=null, NL=null, GROUPS=null, OVERVIEW=null, REGIONAL=null;
@@ -397,11 +339,33 @@ function setupConstants(){
   S = DATA.summary;
   L = DATA.labels;
   NL = L.length;
-  GROUPS = {
-    PP:{color:'#0070C0', avg:S.PP.avg, delta:S.PP.delta, label:'PP'},
-    PE:{color:'#C00000', avg:S.PE.avg, delta:S.PE.delta, label:'PE'},
-    PVC:{color:'#00B050', avg:S.PVC.avg, delta:S.PVC.delta, label:'PVC'}
+  
+  // Initialize GROUPS from subcategory summary data
+  GROUPS = {};
+  const subCatColors={
+    'PP injection':'#0070C0', 'PP yarn':'#0070C0', 'PP copo':'#0070C0',
+    'HD blow':'#C00000', 'HD film':'#C00000', 'HD yarn':'#C00000',
+    'LL film':'#FFA500'
   };
+  
+  if(S.subcats) {
+    Object.keys(S.subcats).forEach(cat=>{
+      if(S.subcats[cat]){
+        GROUPS[cat]={
+          color:subCatColors[cat]||'#999999',
+          avg:S.subcats[cat].avg,
+          delta:S.subcats[cat].delta,
+          label:cat
+        };
+      }
+    });
+  }
+  
+  // Set active group to first available
+  if(!activeGroup && Object.keys(GROUPS).length>0) {
+    activeGroup=Object.keys(GROUPS)[0];
+  }
+  
   REPORTS = DATA.reports;
   const ED = DATA.editorial || {};
   const COLMAP={PP:'#0070C0',PE:'#C00000',PVC:'#00B050'};
@@ -413,7 +377,7 @@ function setupConstants(){
   REGIONAL = (ED.regional||[]).map(r=>({l:r.l, v:r.v, d:r.d}));
 }
 
-let activeGroup='PP', sortKey='v', sortDir=-1, overlay=null;
+let activeGroup=null, sortKey='v', sortDir=-1, overlay=null;
 let rStart=0, rEnd=0, cmpIdx=0;
 
 /* ---- unified change token builder ---- */
@@ -862,7 +826,7 @@ function clearPainted(){
 function renderAll(){
   setupConstants();
   rStart=0; rEnd=NL-1; cmpIdx=NL-2;
-  activeGroup='PP'; overlay=null; sortKey='v'; sortDir=-1;
+  overlay=null; sortKey='v'; sortDir=-1;
   paintStatic();
   setupDateControls();
   updRangeLabels(); updCmpHead(); buildChart(); renderTable();
@@ -910,374 +874,6 @@ async function boot(){
     await loadDay('data.json');
   }
 }
-
-// China PE/LDPE/HDPE/LLDPE exports (tonnes) from PDF
-const CHINA_EXPORTS={
-  PE:{Jan:{2022:27868,2023:47022,2024:58641,2025:50768,2026:94318},Feb:{2022:24452,2023:65497,2024:59332,2025:57868,2026:81132},Mar:{2022:50113,2023:109084,2024:101603,2025:108177,2026:202716},Apr:{2022:66469,2023:89925,2024:90689,2025:93320,2026:545100},May:{2022:77112,2023:83516,2024:77792,2025:105144,2026:515971}},
-  LDPE:{Jan:{2022:13466,2023:18423,2024:17911,2025:15394,2026:26640},Feb:{2022:7398,2023:18078,2024:15956,2025:13753,2026:23001},Mar:{2022:15160,2023:24802,2024:22779,2025:26851,2026:41122},Apr:{2022:16486,2023:21988,2024:23261,2025:23631,2026:94731},May:{2022:18101,2023:21474,2024:24699,2025:26547,2026:108353}},
-  HDPE:{Jan:{2022:11553,2023:21407,2024:30099,2025:28088,2026:44124},Feb:{2022:13809,2023:35546,2024:32087,2025:34018,2026:41844},Mar:{2022:24737,2023:59469,2024:53187,2025:62410,2026:94462},Apr:{2022:34455,2023:50070,2024:44479,2025:49040,2026:269581},May:{2022:34531,2023:48116,2024:32330,2025:46772,2026:246276}},
-  LLDPE:{Jan:{2022:2850,2023:7192,2024:10630,2025:7286,2026:23554},Feb:{2022:2644,2023:11873,2024:11289,2025:10097,2026:16288},Mar:{2022:10216,2023:24813,2024:25637,2025:18916,2026:67133},Apr:{2022:15527,2023:17867,2024:22948,2025:20649,2026:180788},May:{2022:24479,2023:13926,2024:20763,2025:31826,2026:161342}}
-};
-
-// Tab switching
-document.querySelectorAll('.tab-btn').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    const tab=btn.dataset.tab;
-    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-    document.getElementById('daily-prices').style.display='none';
-    document.getElementById('chinaImportsSection').style.display='none';
-    btn.classList.add('active');
-    if(tab==='daily-prices') document.getElementById('daily-prices').style.display='block';
-    else if(tab==='china-imports') { document.getElementById('chinaImportsSection').style.display='block'; renderChinaChart(); }
-  });
-});
-
-// China app filter buttons
-document.querySelectorAll('.china-app-btn').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('.china-app-btn').forEach(b=>{ b.classList.remove('active'); b.style.background='#0f2b38'; b.style.color='#8fa5b3'; });
-    btn.classList.add('active');
-    btn.style.background='#C00000';
-    btn.style.color='#ffffff';
-    renderChinaChart();
-  });
-});
-
-let chinaChartInstance=null;
-let chinaExportsData = null;
-let chinaCardCharts = {};
-let chinaActiveGrades = ['PE', 'LDPE', 'HDPE', 'LLDPE'];
-
-async function loadChinaExports(){
-  try {
-    const response = await fetch('china_exports_pe.json');
-    chinaExportsData = await response.json();
-  } catch(err) {
-    console.error('Failed to load China exports data:', err);
-  }
-}
-
-function renderChinaChart(){
-  if(!chinaExportsData) {
-    loadChinaExports().then(() => renderChinaCards());
-    return;
-  }
-  renderChinaCards();
-}
-
-function renderChinaCards(){
-  if(!chinaExportsData) return;
-  
-  const gridEl = document.getElementById('chinaCardsGrid');
-  if(!gridEl) return;
-  
-  let html = '';
-  
-  if(chinaCurrentPolymer === 'PE') {
-    // PE: Show grade cards
-    const grades = ['PE', 'LDPE', 'HDPE', 'LLDPE'];
-    const visibleGrades = chinaActiveGrades.includes('ALL') ? grades : chinaActiveGrades;
-    
-    visibleGrades.forEach(grade => {
-      const data = chinaExportsData[grade];
-      if(!data) return;
-      
-      const may2026 = data.may2026;
-      const trend = data.monthlyTrend;
-      const topDest = data.topDestinations.slice(0, 3);
-      
-      const chartId = `china-sparkline-${grade}`;
-      
-      html += `
-        <div style="background:#0f2b38;border-radius:8px;padding:14px;border-left:3px solid var(--pe);display:flex;flex-direction:column">
-          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
-            <div style="color:#ffffff;font-size:14px;font-weight:700">${grade}</div>
-            <div style="color:#8fa5b3;font-size:11px">${may2026.volume.toLocaleString()} kt</div>
-          </div>
-          
-          <div style="height:60px;margin:8px 0;position:relative;border-radius:4px;overflow:hidden;background:rgba(255,255,255,0.02)">
-            <canvas id="${chartId}" style="display:block"></canvas>
-          </div>
-          
-          <div style="display:flex;gap:10px;margin:8px 0;font-size:11px">
-            <div style="flex:1">
-              <div style="color:#8fa5b3">MOM</div>
-              <div style="color:${may2026.mom > 0 ? '#46d6a0' : '#ff6274'};font-weight:700;font-size:12px">${may2026.mom > 0 ? '+' : ''}${may2026.mom.toFixed(1)}%</div>
-            </div>
-            <div style="flex:1">
-              <div style="color:#8fa5b3">YOY</div>
-              <div style="color:${may2026.yoy > 0 ? '#46d6a0' : '#ff6274'};font-weight:700;font-size:12px">${may2026.yoy > 0 ? '+' : ''}${may2026.yoy.toFixed(1)}%</div>
-            </div>
-          </div>
-          
-          <div style="font-size:10px;margin:8px 0;padding:8px;background:rgba(255,255,255,0.03);border-radius:4px;line-height:1.4">
-            <div style="color:#8fa5b3;margin-bottom:4px">Top destinations:</div>
-            ${topDest.map(d => `<div style="color:#dae6ed">${d.country}: ${d.volume.toLocaleString()} kt</div>`).join('')}
-          </div>
-          
-          <div style="font-size:10px;color:#8fa5b3;margin-top:8px;padding:8px;background:rgba(255,255,255,0.02);border-radius:4px;line-height:1.3;italic">
-            ${data.keyTakeaway}
-          </div>
-        </div>
-      `;
-    });
-    
-    gridEl.innerHTML = html;
-    
-    visibleGrades.forEach(grade => {
-      const data = chinaExportsData[grade];
-      if(!data) return;
-      
-      setTimeout(() => {
-        const canvasId = `china-sparkline-${grade}`;
-        const canvas = document.getElementById(canvasId);
-        if(!canvas) return;
-        
-        const trend = data.monthlyTrend.slice(-36);
-        const labels = trend.map((_, i) => '');
-        const values = trend.map(m => m.volume);
-        
-        const ctx = canvas.getContext('2d');
-        if(chinaCardCharts[canvasId]) chinaCardCharts[canvasId].destroy();
-        
-        chinaCardCharts[canvasId] = new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: labels,
-            datasets: [{
-              data: values,
-              borderColor: '#ff6274',
-              backgroundColor: 'rgba(255,98,116,0.15)',
-              fill: true,
-              tension: 0.4,
-              pointRadius: 0,
-              borderWidth: 1.5
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: { x: { display: false }, y: { display: false } }
-          }
-        });
-      }, 50);
-    });
-  } else {
-    // PP/PVC: Show single product card
-    const polymer = chinaCurrentPolymer;
-    const data = chinaExportsData[polymer];
-    if(!data) return;
-    
-    const may2026 = data.may2026;
-    const trend = data.monthlyTrend;
-    const topDest = data.topDestinations.slice(0, 3);
-    const chartId = `china-sparkline-${polymer}`;
-    
-    html = `
-      <div style="background:#0f2b38;border-radius:8px;padding:14px;border-left:3px solid var(--pe);display:flex;flex-direction:column;grid-column:1/-1">
-        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
-          <div style="color:#ffffff;font-size:14px;font-weight:700">${polymer}</div>
-          <div style="color:#8fa5b3;font-size:11px">${may2026.volume.toLocaleString()} kt</div>
-        </div>
-        
-        <div style="height:80px;margin:8px 0;position:relative;border-radius:4px;overflow:hidden;background:rgba(255,255,255,0.02)">
-          <canvas id="${chartId}" style="display:block"></canvas>
-        </div>
-        
-        <div style="display:flex;gap:20px;margin:12px 0;font-size:12px">
-          <div>
-            <div style="color:#8fa5b3;margin-bottom:4px">Month-over-Month</div>
-            <div style="color:${may2026.mom > 0 ? '#46d6a0' : '#ff6274'};font-weight:700;font-size:14px">${may2026.mom > 0 ? '+' : ''}${may2026.mom.toFixed(1)}%</div>
-          </div>
-          <div>
-            <div style="color:#8fa5b3;margin-bottom:4px">Year-over-Year</div>
-            <div style="color:${may2026.yoy > 0 ? '#46d6a0' : '#ff6274'};font-weight:700;font-size:14px">${may2026.yoy > 0 ? '+' : ''}${may2026.yoy.toFixed(1)}%</div>
-          </div>
-        </div>
-        
-        <div style="font-size:11px;margin:12px 0;padding:10px;background:rgba(255,255,255,0.03);border-radius:4px;line-height:1.5">
-          <div style="color:#8fa5b3;margin-bottom:6px;font-weight:600">Top Destinations:</div>
-          ${topDest.map(d => `<div style="color:#dae6ed">${d.country}: ${d.volume.toLocaleString()} kt (${d.share.toFixed(1)}%)</div>`).join('')}
-        </div>
-        
-        <div style="font-size:11px;color:#8fa5b3;margin-top:12px;padding:10px;background:rgba(255,255,255,0.02);border-radius:4px;line-height:1.4;italic">
-          <strong>Key insight:</strong> ${data.keyTakeaway}
-        </div>
-      </div>
-    `;
-    
-    gridEl.innerHTML = html;
-    
-    setTimeout(() => {
-      const canvas = document.getElementById(chartId);
-      if(!canvas) return;
-      
-      const trend = data.monthlyTrend.slice(-36);
-      const labels = trend.map((_, i) => '');
-      const values = trend.map(m => m.volume);
-      
-      const ctx = canvas.getContext('2d');
-      if(chinaCardCharts[chartId]) chinaCardCharts[chartId].destroy();
-      
-      chinaCardCharts[chartId] = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: labels,
-          datasets: [{
-            data: values,
-            borderColor: '#ff6274',
-            backgroundColor: 'rgba(255,98,116,0.15)',
-            fill: true,
-            tension: 0.4,
-            pointRadius: 0,
-            borderWidth: 1.5
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: { x: { display: false }, y: { display: false } }
-        }
-      });
-    }, 50);
-  }
-}
-
-// Wire up toggle buttons
-document.addEventListener('DOMContentLoaded', () => {
-  const gradeButtons = document.querySelectorAll('.china-grade-btn');
-  gradeButtons.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const grade = e.target.dataset.grade;
-      
-      // Remove active class from all buttons
-      gradeButtons.forEach(b => b.style.background = '#0f2b38');
-      gradeButtons.forEach(b => b.style.color = '#8fa5b3');
-      
-      // Set active grade
-      if(grade === 'ALL') {
-        chinaActiveGrades = ['PE', 'LDPE', 'HDPE', 'LLDPE'];
-        e.target.style.background = '#c00000';
-        e.target.style.color = '#ffffff';
-      } else {
-        chinaActiveGrades = [grade];
-        e.target.style.background = '#c00000';
-        e.target.style.color = '#ffffff';
-      }
-      
-      renderChinaCards();
-    });
-  });
-  
-  // Set initial active state
-  const firstBtn = gradeButtons[0];
-  if(firstBtn) {
-    firstBtn.style.background = '#c00000';
-    firstBtn.style.color = '#ffffff';
-  }
-});
-
-// Polymer tab switching
-let chinaCurrentPolymer = 'PE';
-let chinaPolymers = {
-  'PE': 'china_exports_pe.json',
-  'PP': 'china_exports_pp.json',
-  'PVC': 'china_exports_pvc.json'
-};
-
-document.addEventListener('DOMContentLoaded', () => {
-  const polymerTabs = document.querySelectorAll('.china-polymer-tab');
-  polymerTabs.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const polymer = e.target.dataset.polymer;
-      chinaCurrentPolymer = polymer;
-      
-      // Update tab styles
-      polymerTabs.forEach(b => {
-        b.style.color = '#8fa5b3';
-        b.style.borderBottomColor = 'transparent';
-      });
-      e.target.style.color = '#ffffff';
-      e.target.style.borderBottomColor = '#c00000';
-      
-      // Update title and hide grade buttons for PP/PVC
-      const gradeButtonsDiv = document.getElementById('chinaGradeButtons');
-      if(polymer === 'PE') {
-        document.getElementById('chinaPolymerTitle').textContent = 'China PE Exports · Grade Overview';
-        document.getElementById('chinaPolymerDesc').textContent = 'May 2026 volumes by PE grade | 36-month trend sparklines | Top 3 destinations per grade';
-        gradeButtonsDiv.style.display = 'flex';
-      } else {
-        document.getElementById('chinaPolymerTitle').textContent = `China ${polymer} Exports · Overview`;
-        document.getElementById('chinaPolymerDesc').textContent = `May 2026 ${polymer} volumes | 36-month trend sparkline | Top 6 destinations`;
-        gradeButtonsDiv.style.display = 'none';
-      }
-      
-      // Reload data and render
-      chinaExportsData = null;
-      chinaActiveGrades = ['ALL'];
-      renderChinaChart();
-      renderDestinationSummary();
-    });
-  });
-});
-
-async function loadPolymerData(polymer){
-  try {
-    const file = chinaPolymers[polymer];
-    const response = await fetch(file);
-    return await response.json();
-  } catch(err) {
-    console.error(`Failed to load ${polymer} data:`, err);
-    return null;
-  }
-}
-
-async function loadChinaExports(){
-  chinaExportsData = await loadPolymerData(chinaCurrentPolymer);
-}
-
-function renderDestinationSummary(){
-  const summaryEl = document.getElementById('chinaDestinationSummary');
-  if(!summaryEl || !chinaExportsData) return;
-  
-  let destinations = [];
-  
-  if(chinaCurrentPolymer === 'PE') {
-    // Aggregate destinations from all grades
-    const grades = ['PE', 'LDPE', 'HDPE', 'LLDPE'];
-    const destMap = {};
-    grades.forEach(grade => {
-      if(chinaExportsData[grade] && chinaExportsData[grade].topDestinations) {
-        chinaExportsData[grade].topDestinations.forEach(d => {
-          if(!destMap[d.country]) destMap[d.country] = 0;
-          destMap[d.country] += d.volume;
-        });
-      }
-    });
-    destinations = Object.entries(destMap)
-      .map(([country, volume]) => ({ country, volume }))
-      .sort((a, b) => b.volume - a.volume)
-      .slice(0, 6);
-  } else {
-    // Single polymer product
-    if(chinaExportsData[chinaCurrentPolymer]) {
-      destinations = chinaExportsData[chinaCurrentPolymer].topDestinations.slice(0, 6);
-    }
-  }
-  
-  let html = destinations.map(d => `
-    <div style="background:#0f2b38;padding:12px;border-radius:8px;border-left:3px solid #c00000">
-      <div style="color:#8fa5b3;font-size:10px;text-transform:uppercase">Destination</div>
-      <div style="color:#ffffff;font-size:16px;font-weight:700;margin-top:4px">${d.country}</div>
-      <div style="color:#dae6ed;font-size:12px;margin-top:4px">${d.volume.toLocaleString()} kt</div>
-    </div>
-  `).join('');
-  
-  summaryEl.innerHTML = html;
-}
-
 boot();
 </script>
 </body>
