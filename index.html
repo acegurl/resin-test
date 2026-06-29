@@ -19,7 +19,7 @@
     --coral:#e23a4e; --coral-soft:#c0354a;
     --amber:#d59320; --green:#1ba37a;
     --dec:#e23a4e; --inc:#1ba37a;   /* decrease=red(up arrow), increase=green(down arrow) */
-    --pp:#0070C0; --pe:#C00000; --pvc:#00B050;
+    --pp:#0070C0; --pe:#C00000; --pvc:#7030A0; --ll:#00B050;
     --mono:'SCG',ui-monospace,'SF Mono',Menlo,monospace;
   }
   *{box-sizing:border-box;margin:0;padding:0}
@@ -81,8 +81,11 @@
   .ov-body li{list-style:none;font-size:13.2px;line-height:1.55;padding-left:18px;position:relative;margin:5px 0;opacity:.92}
   .ov-body li::before{content:'';position:absolute;left:3px;top:8px;width:5px;height:5px;border-radius:50%;background:var(--secCol,var(--coral-soft));opacity:.95}
 
-  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
-  @media(max-width:900px){.stats{grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:9px}}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:15px}
+  .stats.row2{grid-template-columns:repeat(3,1fr)}
+  .stats.row3{grid-template-columns:1fr}
+  @media(max-width:1000px){.stats{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)} .stats.row2{grid-template-columns:repeat(2,1fr)} .stats.row3{grid-template-columns:1fr}}
   .stat{background:rgba(20,50,65,.04);border:1px solid rgba(20,50,65,.09);border-left:4px solid transparent;border-radius:13px;padding:15px 15px 14px;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
   .stat[data-g*="PP"]{border-left-color:#0070C0;background:rgba(0,112,192,.06)}
   .stat[data-g*="HD"]{border-left-color:#C00000;background:rgba(192,0,0,.06)}
@@ -93,7 +96,7 @@
   .stat .big{font-family:var(--mono);font-weight:700;font-size:clamp(20px,3vw,27px);color:var(--ink);margin-top:7px;line-height:1}
   .stat .unit{font-size:11px;color:var(--ink-faint);font-weight:500}
   .stat .delta{margin-top:8px;font-size:12px;font-family:var(--mono);display:flex;align-items:center;gap:5px}
-  .stats-2{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:11px}
+  .stats-2{display:none;grid-template-columns:1fr 1fr;gap:11px;margin-top:11px}
   .stat .note{font-size:11.5px;color:var(--ink-dim);margin-top:7px;line-height:1.4}
 
   /* unified change token: arrow + value. up=red, down=green */
@@ -113,7 +116,8 @@
   .seg button.on{color:#ffffff;font-weight:700}
   .seg button[data-g*="PP"].on{background:#0070C0}
   .seg button[data-g*="HD"].on{background:#C00000}
-  .seg button[data-g*="LL"].on{background:#FFA500}
+  .seg button[data-g*="LL"].on{background:#00B050}
+  .seg button[data-g*="PVC"].on{background:#7030A0}
   .chart-meta{font-size:11.5px;color:var(--ink-faint);font-family:var(--mono)}
   .chart-box{position:relative;height:300px;margin-top:8px}
   .pick-hint{font-size:11.5px;color:var(--ink-faint);margin-top:4px}
@@ -226,7 +230,7 @@
       <div id="overview"></div>
     </div>
     <div class="panel">
-      <h2>Average &middot; VND/kg</h2>
+      <h2>VND/kg</h2>
       <div class="stats" id="statRow"></div>
       <div class="stats-2">
         <div class="stat" style="cursor:default">
@@ -347,8 +351,8 @@ function setupConstants(){
   GROUPS = {};
   const subCatColors={
     'PP injection':'#0070C0', 'PP yarn':'#0070C0', 'PP copo':'#0070C0',
-    'HD blow':'#C00000', 'HD film':'#C00000', 'HD yarn':'#C00000',
-    'LL film':'#FFA500'
+    'HD blow':'#C00000', 'HD film':'#C00000', 'HD yarn':'#C00000', 'HD injection':'#C00000',
+    'LL film':'#00B050', 'PVC':'#7030A0'
   };
   
   if(S.subcats) {
@@ -420,9 +424,18 @@ OVERVIEW.forEach((o,i)=>{
 });
 
 const sr=document.getElementById('statRow');
-Object.entries(GROUPS).forEach(([g,o])=>{
+// Order: PP group (4 cards in row 1), HD group (3 cards in row 2), LL/PVC (row 3)
+const groupOrder=['PP injection','PP yarn','PP copo','HD injection','HD blow','HD film','HD yarn','LL film','PVC'];
+const cardColors={'PP injection':'#0070C0','PP yarn':'#0070C0','PP copo':'#0070C0','HD injection':'#C00000',
+  'HD blow':'#C00000','HD film':'#C00000','HD yarn':'#C00000','LL film':'#00B050','PVC':'#7030A0'};
+const sortedEntries=groupOrder.map(g=>[g,GROUPS[g]]).filter(([g,o])=>o);
+
+sortedEntries.forEach(([g,o])=>{
   const card=document.createElement('div');
   card.className='stat'+(g===activeGroup?' active':''); card.dataset.g=g;
+  const borderColor=cardColors[g]||'#999';
+  card.style.borderColor=borderColor;
+  card.style.borderWidth='2px';
   card.innerHTML='<div class="lbl">'+o.label.toUpperCase()+'</div>'+
     '<div class="big">'+o.avg.toLocaleString('en-US')+'</div>'+
     '<div class="delta">'+chgToken(o.delta, Math.abs(o.delta).toLocaleString()+' vs last', false)+'</div>';
