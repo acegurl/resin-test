@@ -85,7 +85,8 @@
   .stat{background:rgba(20,50,65,.04);border:1px solid rgba(20,50,65,.09);border-radius:13px;padding:15px 15px 14px;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
   .stat:hover{border-color:var(--cardEdge);transform:translateY(-2px)}
   .stat.active{border-color:var(--coral);box-shadow:0 0 0 1px var(--coral) inset}
-  .stat .lbl{font-size:10.5px;letter-spacing:1.3px;text-transform:uppercase;color:var(--ink-faint);font-weight:600}
+  .stat .lbl{font-size:10.5px;letter-spacing:1.3px;text-transform:uppercase;color:var(--ink-faint);font-weight:600;display:flex;align-items:center;gap:7px}
+  .stat .lbl .cdot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
   .stat .big{font-family:var(--mono);font-weight:700;font-size:clamp(20px,3vw,27px);color:var(--ink);margin-top:7px;line-height:1}
   .stat .unit{font-size:11px;color:var(--ink-faint);font-weight:500}
   .stat .delta{margin-top:8px;font-size:12px;font-family:var(--mono);display:flex;align-items:center;gap:5px}
@@ -275,7 +276,7 @@
         </div>
       </div>
       <div class="ctl">
-        <label>Table compares to</label>
+        <label>Compares to</label>
         <div class="row">
           <select id="cmpDate"></select>
           <button class="resetbtn" id="resetDates">Reset</button>
@@ -303,8 +304,8 @@
     <table>
       <thead><tr>
         <th data-k="p">Grade <span class="ar"></span></th>
-        <th data-k="producer" id="thProducer" style="display:none">Producer <span class="ar"></span></th>
-        <th data-k="country" id="thCountry" style="display:none">Origin <span class="ar"></span></th>
+        <th data-k="producer" id="thProducer" style="display:none;text-align:left">Producer <span class="ar"></span></th>
+        <th data-k="country" id="thCountry" style="display:none;text-align:left">Origin <span class="ar"></span></th>
         <th data-k="v">Price <span class="ar"></span></th>
         <th data-k="c">Change <span class="ar"></span></th>
         <th data-k="vsl" id="thVsl">vs Compare <span class="ar"></span></th>
@@ -347,7 +348,7 @@
 let DATA=null, REPORTS=null, S=null, L=null, NL=null, GROUPS=null, OVERVIEW=null, REGIONAL=null;
 
 const SUBCAT_ORDER=['PP injection','PP yarn','PP copo','HD blow','HD film','HD yarn','LL film'];
-const SUBCAT_COLORS={'PP injection':'#0070C0','PP yarn':'#0070C0','PP copo':'#0070C0','HD blow':'#C00000','HD film':'#C00000','HD yarn':'#C00000','LL film':'#00B050'};
+const SUBCAT_COLORS={'PP injection':'#0070C0','PP yarn':'#0070C0','PP copo':'#0070C0','HD blow':'#C00000','HD film':'#C00000','HD yarn':'#C00000','LL film':'#C00000'};
 function setupConstants(){
   S = DATA.summary;
   L = DATA.labels;
@@ -411,8 +412,7 @@ const sr=document.getElementById('statRow');
 Object.entries(GROUPS).forEach(([g,o])=>{
   const card=document.createElement('div');
   card.className='stat'+(g===activeGroup?' active':''); card.dataset.g=g;
-  card.style.borderColor=o.color; card.style.borderWidth='1.5px';
-  card.innerHTML='<div class="lbl">'+o.label.toUpperCase()+'</div>'+
+  card.innerHTML='<div class="lbl"><span class="cdot" style="background:'+o.color+'"></span>'+o.label.toUpperCase()+'</div>'+
     '<div class="big">'+o.avg.toLocaleString('en-US')+'</div>'+
     '<div class="delta">'+chgToken(o.delta, Math.abs(o.delta).toLocaleString()+' vs last', false)+'</div>';
   card.onclick=()=>selectGroup(g);
@@ -506,13 +506,9 @@ function currentTableRows(){
   return metas;
 }
 function gradeColor(r){
-  // colour by subcategory when known, else by material
-  const sub=r.sub||'';
-  if(sub.indexOf('PP')===0) return '#0070C0';
-  if(sub.indexOf('HD')===0) return '#C00000';
-  if(sub.indexOf('LL')===0) return '#00B050';
+  // colour by material: PP blue, PE (incl HD/LL) red, PVC green
   if(r.mat==='PP') return '#0070C0';
-  if(r.mat==='PVC') return '#7030A0';
+  if(r.mat==='PVC') return '#00B050';
   return '#C00000';
 }
 function renderTable(){
@@ -534,8 +530,8 @@ function renderTable(){
     const isOv=overlay===r.p;
     const chgTxt = r.c===0?'0':Math.abs(r.c).toLocaleString();
     const gc=gradeColor(r);
-    const prodCell = showProd ? '<td style="color:var(--ink-dim)">'+(r.producer||'<span class="muted">&mdash;</span>')+'</td>' : '';
-    const ctryCell = showCtry ? '<td style="color:var(--ink-dim)">'+(r.country||'<span class="muted">&mdash;</span>')+'</td>' : '';
+    const prodCell = showProd ? '<td style="color:var(--ink-dim);text-align:left">'+(r.producer||'<span class="muted">&mdash;</span>')+'</td>' : '';
+    const ctryCell = showCtry ? '<td style="color:var(--ink-dim);text-align:left">'+(r.country||'<span class="muted">&mdash;</span>')+'</td>' : '';
     return '<tr data-p="'+r.p+'" style="cursor:pointer;'+(isOv?'background:rgba(20,50,65,.06)':'')+'">'+
       '<td style="border-left:3px solid '+gc+'"><span class="tag" style="background:'+gc+'"></span>'+
         '<span style="color:'+gc+';font-weight:600">'+r.p+'</span></td>'+
@@ -776,7 +772,7 @@ async function buildPDF(){
     T('Selective Average - VND/kg',M,y); y+=5;
     const cardW=(W-2*M-2*6)/3, cardH=22;
     const SUBS=['PP injection','PP yarn','PP copo','HD blow','HD film','HD yarn','LL film'];
-    const SUBCOL={'PP injection':[0,112,192],'PP yarn':[0,112,192],'PP copo':[0,112,192],'HD blow':[192,0,0],'HD film':[192,0,0],'HD yarn':[192,0,0],'LL film':[0,176,80]};
+    const SUBCOL={'PP injection':[0,112,192],'PP yarn':[0,112,192],'PP copo':[0,112,192],'HD blow':[192,0,0],'HD film':[192,0,0],'HD yarn':[192,0,0],'LL film':[192,0,0]};
     SUBS.forEach((cat,i)=>{
       const it=S[cat]; if(!it) return;
       const col=SUBCOL[cat]||[0,112,192];
