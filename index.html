@@ -105,7 +105,7 @@
   .chart-panel{margin-top:14px}
   .chart-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:6px}
   .seg{display:inline-flex;background:rgba(20,50,65,.05);border:1px solid rgba(20,50,65,.12);border-radius:11px;padding:4px;gap:3px}
-  .seg button{font-weight:600;font-size:12.5px;color:var(--ink-dim);background:none;border:none;padding:7px 15px;border-radius:8px;cursor:pointer;transition:.18s;letter-spacing:.4px}
+  .seg button{font-family:'SCG',system-ui,-apple-system,sans-serif;font-weight:600;font-size:12.5px;color:var(--ink-dim);background:none;border:none;padding:7px 15px;border-radius:8px;cursor:pointer;transition:.18s;letter-spacing:.4px}
   .seg button.on{color:#ffffff}
   .seg button.on.pp{background:var(--pp)} .seg button.on.pe{background:var(--pe)} .seg button.on.pvc{background:var(--pvc)}
   .chart-meta{font-size:11.5px;color:var(--ink-faint);font-family:var(--mono)}
@@ -133,6 +133,9 @@
   .tblseg button:hover{background:rgba(20,50,65,.06)}
   .tblseg#matSeg button.on{color:#fff;background:var(--ink)}
   .tblseg#subSeg button.on{color:#fff;background:#0070C0}
+  .viewopts{display:inline-flex;gap:14px;align-items:center;margin-left:auto}
+  .viewopts label{display:inline-flex;align-items:center;gap:5px;font-family:'SCG',system-ui,sans-serif;font-size:12.5px;font-weight:600;color:var(--ink-dim);cursor:pointer;letter-spacing:.3px}
+  .viewopts input{accent-color:#0070C0;cursor:pointer;width:14px;height:14px}
   .search{flex:1;min-width:160px;background:rgba(20,50,65,.05);border:1px solid rgba(20,50,65,.12);border-radius:10px;padding:9px 13px;color:var(--ink);font-size:13px;font-family:inherit}
   .search::placeholder{color:var(--ink-faint)} .search:focus{outline:none;border-color:var(--coral)}
   table{width:100%;border-collapse:collapse}
@@ -145,7 +148,7 @@
   tbody tr{transition:background .15s} tbody tr:hover{background:rgba(20,50,65,.035)}
   tbody .muted{color:var(--ink-faint);opacity:.55}
   .spark{display:block}
-  .tag{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:8px;vertical-align:middle}
+  .tag{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;vertical-align:middle}
   @media(max-width:920px){.tbl-panel{overflow-x:auto} .tbl-panel table{min-width:820px}}
 
   .reg-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px}
@@ -225,7 +228,7 @@
       <div id="overview"></div>
     </div>
     <div class="panel">
-      <h2>VND/kg</h2>
+      <h2>Daily Average</h2>
       <div class="stats" id="statRow"></div>
       <div class="stats-2" style="display:none">
         <div class="stat" style="cursor:default">
@@ -286,17 +289,22 @@
     <div class="chart-head"><h2 style="margin:0" id="tblTitle">Products</h2></div>
     <div class="tbl-tools">
       <div class="seg tblseg" id="matSeg">
-        <button data-m="ALL" class="on">All</button>
-        <button data-m="PP">PP</button>
+        <button data-m="PP" class="on">PP</button>
         <button data-m="PE">PE</button>
         <button data-m="PVC">PVC</button>
       </div>
       <div class="seg tblseg" id="subSeg"></div>
-      <input class="search" id="search" placeholder="Filter grades&hellip;">
+      <input class="search" id="search" placeholder="Search grades&hellip;">
+      <div class="viewopts">
+        <label><input type="checkbox" id="vwProducer"> Producer</label>
+        <label><input type="checkbox" id="vwCountry"> Origin</label>
+      </div>
     </div>
     <table>
       <thead><tr>
         <th data-k="p">Grade <span class="ar"></span></th>
+        <th data-k="producer" id="thProducer" style="display:none">Producer <span class="ar"></span></th>
+        <th data-k="country" id="thCountry" style="display:none">Origin <span class="ar"></span></th>
         <th data-k="v">Price <span class="ar"></span></th>
         <th data-k="c">Change <span class="ar"></span></th>
         <th data-k="vsl" id="thVsl">vs Compare <span class="ar"></span></th>
@@ -487,44 +495,61 @@ function computeRow(m){
   // vs compare date
   const cmpVal=m.series[cmpIdx];
   const vsl=pct(latest,cmpVal);
-  return {p:m.p, v:latest, c:chgAbs, mat:m.mat,
+  return {p:m.p, v:latest, c:chgAbs, mat:m.mat, producer:m.producer||'', country:m.country||'',
     vsl:vsl, pw:pct(latest,m.pwBase), ytd:pct(latest,m.ytdBase), yoy:pct(latest,m.yoyBase),
     series:m.series};
 }
-let tblMat='ALL', tblSub=null;
+let tblMat='PP', tblSub=null;
 function currentTableRows(){
-  // Build the full row set from selected material(s)
-  const mats = tblMat==='ALL' ? ['PP','PE','PVC'] : [tblMat];
-  let metas=[];
-  mats.forEach(m=>{ if(DATA.meta[m]) metas=metas.concat(DATA.meta[m]); });
+  let metas = DATA.meta[tblMat] ? DATA.meta[tblMat].slice() : [];
   if(tblSub) metas=metas.filter(m=>m.sub===tblSub);
   return metas;
 }
+function gradeColor(r){
+  // colour by subcategory when known, else by material
+  const sub=r.sub||'';
+  if(sub.indexOf('PP')===0) return '#0070C0';
+  if(sub.indexOf('HD')===0) return '#C00000';
+  if(sub.indexOf('LL')===0) return '#00B050';
+  if(r.mat==='PP') return '#0070C0';
+  if(r.mat==='PVC') return '#7030A0';
+  return '#C00000';
+}
 function renderTable(){
-  const col=(GROUPS[activeGroup]&&GROUPS[activeGroup].color)||'#0070C0';
   const q=document.getElementById('search').value.trim().toLowerCase();
-  let rows=currentTableRows().map(computeRow);
-  if(q) rows=rows.filter(r=>r.p.toLowerCase().includes(q));
+  const showProd=document.getElementById('vwProducer').checked;
+  const showCtry=document.getElementById('vwCountry').checked;
+  let rows=currentTableRows().map(m=>{const r=computeRow(m); r.sub=m.sub; return r;});
+  if(q) rows=rows.filter(r=>r.p.toLowerCase().includes(q)
+      || (showProd && (r.producer||'').toLowerCase().includes(q))
+      || (showCtry && (r.country||'').toLowerCase().includes(q)));
   rows.sort((a,b)=>{let av=a[sortKey],bv=b[sortKey];
-    if(sortKey==='p'){av=av.toLowerCase();bv=bv.toLowerCase();return av<bv?-sortDir:av>bv?sortDir:0;}
+    if(sortKey==='p'||sortKey==='producer'||sortKey==='country'){av=(av||'').toLowerCase();bv=(bv||'').toLowerCase();return av<bv?-sortDir:av>bv?sortDir:0;}
     if(av==null)av=-1e9; if(bv==null)bv=-1e9;
     return (av-bv)*sortDir;});
+  // toggle header columns
+  document.getElementById('thProducer').style.display=showProd?'':'none';
+  document.getElementById('thCountry').style.display=showCtry?'':'none';
   tbody.innerHTML=rows.map(r=>{
     const isOv=overlay===r.p;
     const chgTxt = r.c===0?'0':Math.abs(r.c).toLocaleString();
-    const rc=r.mat==='PP'?'#0070C0':(r.mat==='PVC'?'#7030A0':'#C00000');
+    const gc=gradeColor(r);
+    const prodCell = showProd ? '<td style="color:var(--ink-dim)">'+(r.producer||'<span class="muted">&mdash;</span>')+'</td>' : '';
+    const ctryCell = showCtry ? '<td style="color:var(--ink-dim)">'+(r.country||'<span class="muted">&mdash;</span>')+'</td>' : '';
     return '<tr data-p="'+r.p+'" style="cursor:pointer;'+(isOv?'background:rgba(20,50,65,.06)':'')+'">'+
-      '<td><span class="tag" style="background:'+(isOv?'#fff':rc)+'"></span>'+r.p+'</td>'+
+      '<td style="border-left:3px solid '+gc+'"><span class="tag" style="background:'+gc+'"></span>'+
+        '<span style="color:'+gc+';font-weight:600">'+r.p+'</span></td>'+
+      prodCell+ctryCell+
       '<td>'+(r.v!=null?Math.round(r.v*1000).toLocaleString('en-US'):'<span class="muted">&mdash;</span>')+'</td>'+
       '<td>'+chgToken(r.c, chgTxt, true)+'</td>'+
       '<td>'+pctToken(r.vsl)+'</td>'+
       '<td>'+pctToken(r.pw)+'</td>'+
       '<td>'+pctToken(r.ytd)+'</td>'+
       '<td>'+pctToken(r.yoy)+'</td>'+
-      '<td>'+sparkSVG(r.series,rc)+'</td></tr>';
+      '<td>'+sparkSVG(r.series,gc)+'</td></tr>';
   }).join('');
   tbody.querySelectorAll('tr').forEach(tr=>{tr.onclick=()=>{overlay=overlay===tr.dataset.p?null:tr.dataset.p;buildChart();renderTable();};});
-  const label = tblSub ? tblSub : (tblMat==='ALL'?'All':tblMat);
+  const label = tblSub ? tblSub : tblMat;
   document.getElementById('tblTitle').textContent=label+' Products ('+rows.length+')';
 }
 
@@ -551,10 +576,11 @@ function syncFilterButtons(){
 function buildSubSeg(){
   // subcategory chips available within the current material
   const seg=document.getElementById('subSeg'); if(!seg) return;
-  const subs=SUBCAT_ORDER.filter(s=> tblMat==='ALL' || (DATA.submat&&DATA.submat[s]===tblMat));
+  const subs=SUBCAT_ORDER.filter(s=> (DATA.submat&&DATA.submat[s]===tblMat));
   let html='<button data-s="">All grades</button>';
   html+=subs.map(s=>'<button data-s="'+s+'">'+s+'</button>').join('');
   seg.innerHTML=html;
+  seg.style.display = subs.length ? '' : 'none';
   seg.querySelectorAll('button').forEach(b=>b.onclick=()=>{
     tblSub=b.dataset.s||null; overlay=null; syncFilterButtons(); renderTable();
   });
@@ -565,6 +591,8 @@ document.querySelectorAll('#matSeg button').forEach(b=>b.onclick=()=>{
   buildSubSeg(); syncFilterButtons(); renderTable();
 });
 document.getElementById('search').oninput=renderTable;
+document.getElementById('vwProducer').onchange=renderTable;
+document.getElementById('vwCountry').onchange=renderTable;
 document.querySelectorAll('thead th[data-k]').forEach(th=>{
   th.onclick=()=>{const k=th.dataset.k;
     if(sortKey===k) sortDir*=-1; else {sortKey=k;sortDir=(k==='p')?1:-1;}
@@ -745,7 +773,7 @@ async function buildPDF(){
       y+=3.5;
     });
     y+=1; F('bold'); doc.setFontSize(10.5); doc.setTextColor(INK[0],INK[1],INK[2]);
-    T('Subcategory Average - VND/kg',M,y); y+=5;
+    T('Selective Average - VND/kg',M,y); y+=5;
     const cardW=(W-2*M-2*6)/3, cardH=22;
     const SUBS=['PP injection','PP yarn','PP copo','HD blow','HD film','HD yarn','LL film'];
     const SUBCOL={'PP injection':[0,112,192],'PP yarn':[0,112,192],'PP copo':[0,112,192],'HD blow':[192,0,0],'HD film':[192,0,0],'HD yarn':[192,0,0],'LL film':[0,176,80]};
@@ -773,66 +801,9 @@ async function buildPDF(){
     });
     footer(1);
 
-    /* ---------- PRODUCT PAGES (one per subcategory) ---------- */
-    const order=SUBCAT_ORDER.filter(g=>DATA.groupavg[g] && DATA.groupavg[g].some(v=>v!=null));
-    for(let pi=0; pi<order.length; pi++){
-      const g=order[pi];
-      const mat=(DATA.submat&&DATA.submat[g])||'PP';
-      const metaRows=(DATA.meta[mat]||[]).filter(m=>m.sub===g);
-      doc.addPage();
-      header(g+' - Price Chart & Product Table', metaRows.length+' grades  -  '+L[0]+' to '+L[L.length-1]);
-      let yy=46;
-      const img=await offscreenChart(g);
-      const imgW=W-2*M, imgH=imgW*(440/1100);
-      doc.addImage(img,'JPEG',M,yy,imgW,imgH); yy+=imgH+6;
-      const rows=metaRows.map(m=>{
-        const s=m.series; const nn=s.map((v,i)=>[v,i]).filter(p=>p[0]!=null);
-        const latest=nn.length?nn[nn.length-1][0]:null;
-        const prev=nn.length>=2?nn[nn.length-2][0]:null;
-        const chg=(latest!=null&&prev!=null)?Math.round((latest-prev)*1000):0;
-        const pct=(l,b)=>(l==null||b==null||b===0)?null:Math.round((l-b)/b*10000)/100;
-        return {p:m.p, v:latest, c:chg, vsl:pct(latest,s[L.length-2]),
-          pw:pct(latest,m.pwBase), ytd:pct(latest,m.ytdBase), yoy:pct(latest,m.yoyBase)};
-      });
-      // columns: name(l) then 6 right-aligned numeric. widths sum to content width (182)
-      const cw=[54,22,22,26,22,20,16];  // = 182
-      const heads=['Grade','Price','Chg','vs '+(L[L.length-2]||'prev'),'Pre-war','YTD','YOY'];
-      const aligns=['l','r','r','r','r','r','r'];
-      const totalW=cw.reduce((a,b)=>a+b,0); const x0=M; const rowH=6.1;
-      // x positions: left edge of each column
-      const xL=[]; let acc=x0; cw.forEach(w=>{xL.push(acc);acc+=w;});
-      // header band
-      doc.setFillColor(13,39,51); doc.rect(x0,yy,totalW,7,'F');
-      F('bold'); doc.setFontSize(7.6); doc.setTextColor(255,255,255);
-      heads.forEach((h,i)=>{ const tx=aligns[i]==='l'?xL[i]+2:xL[i]+cw[i]-2; doc.text(h,tx,yy+4.7,{align:aligns[i]==='l'?'left':'right'}); });
-      yy+=7;
-      rows.forEach((r,idx)=>{
-        if(idx%2===0){doc.setFillColor(247,250,251);doc.rect(x0,yy,totalW,rowH,'F');}
-        const by=yy+4.1;
-        // grade (clip to fit)
-        F('normal'); doc.setFontSize(7.4); doc.setTextColor(INK[0],INK[1],INK[2]);
-        let nm=SAFE(r.p); while(doc.getTextWidth(nm)>cw[0]-3 && nm.length>4){ nm=nm.slice(0,-1); }
-        if(nm!==SAFE(r.p)) nm=nm.slice(0,-1)+'.';
-        doc.text(nm,xL[0]+2,by);
-        // price (ink, right)
-        doc.setTextColor(INK[0],INK[1],INK[2]); F('normal'); doc.setFontSize(7.4);
-        doc.text(r.v!=null?Math.round(r.v*1000).toLocaleString('en-US'):'-',xL[1]+cw[1]-2,by,{align:'right'});
-        // change abs (zero shows clean dash)
-        chgCell(r.c===0?null:r.c,null,xL[2]+cw[2]-2,by);
-        // pct columns
-        chgCell(r.vsl,'%',xL[3]+cw[3]-2,by);
-        chgCell(r.pw,'%',xL[4]+cw[4]-2,by);
-        chgCell(r.ytd,'%',xL[5]+cw[5]-2,by);
-        chgCell(r.yoy,'%',xL[6]+cw[6]-2,by);
-        yy+=rowH;
-      });
-      doc.setDrawColor(225); doc.setLineWidth(.2); doc.rect(x0,yy-rows.length*rowH-7,totalW,rows.length*rowH+7);
-      footer(pi+2);
-    }
-
     /* ---------- FULL GRADE TABLES (all products per material) ---------- */
     const MATS=['PP','PE','PVC'];
-    let pageNo=order.length+2;
+    let pageNo=2;
     for(const mat of MATS){
       const list=DATA.meta[mat]||[]; if(!list.length) continue;
       doc.addPage();
@@ -906,7 +877,7 @@ function renderAll(){
   setupConstants();
   rStart=0; rEnd=NL-1; cmpIdx=NL-2;
   overlay=null; sortKey='v'; sortDir=-1;
-  tblMat='ALL'; tblSub=null;
+  tblMat='PP'; tblSub=null;
   paintStatic();
   buildSubSeg();
   setupDateControls();
