@@ -308,7 +308,7 @@
         <th data-k="v">Price <span class="ar"></span></th>
         <th data-k="c">Change <span class="ar"></span></th>
         <th data-k="vsl" id="thVsl">vs last <span class="ar"></span></th>
-        <th data-k="pw">Pre-war <span class="ar"></span></th>
+        <th data-k="pw" style="display:none">Pre-war <span class="ar"></span></th>
         <th data-k="ytd">YTD <span class="ar"></span></th>
         <th data-k="yoy">YOY <span class="ar"></span></th>
         <th>Trend</th>
@@ -544,7 +544,6 @@ function renderTable(){
       '<td>'+(r.v!=null?Math.round(r.v*1000).toLocaleString('en-US'):'<span class="muted">&mdash;</span>')+'</td>'+
       '<td>'+chgCellHtml+'</td>'+
       '<td>'+pctToken(r.vsl)+'</td>'+
-      '<td>'+pctToken(r.pw)+'</td>'+
       '<td>'+pctToken(r.ytd)+'</td>'+
       '<td>'+pctToken(r.yoy)+'</td>'+
       '<td>'+sparkSVG(r.series,gc)+'</td></tr>';
@@ -827,10 +826,10 @@ async function buildPDF(){
         return {p:m.p, producer:m.producer||'', country:m.country||'', v:latest, c:chg, vsl:vsl,
           pw:pct(latest,m.pwBase), ytd:pct(latest,m.ytdBase), yoy:pct(latest,m.yoyBase)};
       });
-      const cw=[38,26,20,18,16,18,16,15,15];
-      const heads=['Grade','Producer','Origin','Price','Chg','vs last','Pre-war','YTD','YOY'];
-      const aligns=['l','l','l','r','r','r','r','r','r'];
-      const keys=['p','producer','country','v','c','vsl','pw','ytd','yoy'];
+      const cw=[40,28,22,20,18,20,17,17];
+      const heads=['Grade','Producer','Origin','Price','Chg','vs last','YTD','YOY'];
+      const aligns=['l','l','l','r','r','r','r','r'];
+      const keys=['p','producer','country','v','c','vsl','ytd','yoy'];
       const totalW=cw.reduce((a,b)=>a+b,0); const x0=M; const rowH=6.1;
       const xL=[]; let acc=x0; cw.forEach(w=>{xL.push(acc);acc+=w;});
       doc.setFillColor(13,39,51); doc.rect(x0,yy,totalW,7,'F');
@@ -862,9 +861,8 @@ async function buildPDF(){
         doc.text(r.v!=null?Math.round(r.v*1000).toLocaleString('en-US'):'-',xL[3]+cw[3]-2,by,{align:'right'});
         chgCell(r.c,null,xL[4]+cw[4]-2,by);
         chgCell(r.vsl,'%',xL[5]+cw[5]-2,by);
-        chgCell(r.pw,'%',xL[6]+cw[6]-2,by);
-        chgCell(r.ytd,'%',xL[7]+cw[7]-2,by);
-        chgCell(r.yoy,'%',xL[8]+cw[8]-2,by);
+        chgCell(r.ytd,'%',xL[6]+cw[6]-2,by);
+        chgCell(r.yoy,'%',xL[7]+cw[7]-2,by);
         yy+=rowH;
       });
       footer(pageNo++);
