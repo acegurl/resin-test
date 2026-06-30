@@ -365,7 +365,7 @@ function setupConstants(){
     col:COLMAP[g], title:g, sub:ovsrc[g].sub||'',
     pts:(ovsrc[g].bullets||[])
   }));
-  REGIONAL = (ED.regional||[]).map(r=>({l:r.l, v:r.v, d:r.d}));
+  REGIONAL = (ED.regional||[]).map(r=>({l:r.l, v:r.v, d:r.d, n:r.n}));
 }
 
 let activeGroup=null, sortKey='v', sortDir=-1, overlay=null;
@@ -432,8 +432,9 @@ Object.entries(GROUPS).forEach(([g,o])=>{
 const rg=document.getElementById('regGrid');
 REGIONAL.forEach(r=>{
   const d=document.createElement('div'); d.className='reg';
-  d.innerHTML='<div class="rl">'+r.l+'</div><div class="rv">'+r.v+'</div>'+
-    '<div class="rd">'+chgToken(r.d, Math.abs(r.d)+' vs last', false)+'</div>';
+  const deltaHtml = (r.d==null || isNaN(Number(r.d))) ? '' :
+    '<div class="rd">'+chgToken(r.d, Math.abs(r.d).toLocaleString('en-US')+' '+(r.n||'vs last'), false)+'</div>';
+  d.innerHTML='<div class="rl">'+r.l+'</div><div class="rv">'+r.v+'</div>'+deltaHtml;
   rg.appendChild(d);
 });
 }
@@ -795,14 +796,14 @@ async function buildPDF(){
     doc.setLineWidth(.2);
     y+=Math.ceil(SUBS.length/3)*(cardH+5)+3;
     F('bold'); doc.setFontSize(10.5); doc.setTextColor(INK[0],INK[1],INK[2]); T('Regional References - $/ton',M,y); y+=5;
-    const REG=(ED.regional||[]).map(r=>[r.l, r.v, r.d]);
+    const REG=(ED.regional||[]).map(r=>[r.l, r.v, r.d, r.n]);
     const rcW=(W-2*M-3*5)/4, rcH=18;
     REG.forEach((r,i)=>{ const cx=M+(i%4)*(rcW+5), cy=y+Math.floor(i/4)*(rcH+5);
       doc.setFillColor(248,250,251); doc.setDrawColor(223,229,233); doc.roundedRect(cx,cy,rcW,rcH,2.5,2.5,'FD');
       F('bold');doc.setFontSize(6.4);doc.setTextColor(FAINT[0],FAINT[1],FAINT[2]);
       T(doc.splitTextToSize(SAFE(r[0]).toUpperCase(),rcW-4),cx+3,cy+5);
       F('bold');doc.setFontSize(10.5);doc.setTextColor(INK[0],INK[1],INK[2]);T(r[1],cx+3,cy+12);
-      chgCell(r[2],null,cx+rcW-3,cy+16);
+      if(r[2]!=null) chgCell(r[2],null,cx+rcW-3,cy+16);
     });
     footer(1);
 
