@@ -65,8 +65,7 @@
   .section-label .stamp{font-family:var(--mono);font-size:11px;letter-spacing:1px;color:var(--ink-faint);text-transform:none}
 
   .grid{display:grid;gap:14px}
-  .top{grid-template-columns:1.05fr 1.35fr;align-items:stretch}
-  @media(max-width:860px){.top{grid-template-columns:1fr}}
+  .top{grid-template-columns:1fr;align-items:stretch}
 
   .ov-row{padding:13px 0;border-bottom:1px solid rgba(20,50,65,.08)}
   .ov-row:last-child{border-bottom:none;padding-bottom:2px}
@@ -133,6 +132,8 @@
   .tblseg button{font-family:'SCG',system-ui,sans-serif;font-weight:600;font-size:12px;color:var(--ink-dim);background:none;border:none;padding:6px 12px;border-radius:7px;cursor:pointer;transition:.16s;letter-spacing:.3px}
   .tblseg button:hover{background:rgba(20,50,65,.06)}
   .tblseg#matSeg button.on{color:#fff;background:var(--ink)}
+  .tblseg#impMatSeg button.on{color:#fff;background:var(--ink)}
+  .tblseg#impDateSeg button.on{color:#fff;background:var(--ink)}
   .tblseg#subSeg button.on{color:#fff;background:#0070C0}
   .viewopts{display:inline-flex;gap:14px;align-items:center;margin-left:auto}
   .viewopts label{display:inline-flex;align-items:center;gap:5px;font-family:'SCG',system-ui,sans-serif;font-size:12.5px;font-weight:600;color:var(--ink-dim);cursor:pointer;letter-spacing:.3px}
@@ -150,16 +151,25 @@
   tbody .muted{color:var(--ink-faint);opacity:.55}
   .spark{display:block}
   .tag{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;vertical-align:middle}
-  @media(max-width:920px){.tbl-panel{overflow-x:auto} .tbl-panel table{min-width:820px}}
+  @media(max-width:960px){.tbl-panel,.imp-panel{overflow-x:auto;-webkit-overflow-scrolling:touch} .tbl-panel table,.imp-panel table{min-width:760px}}
 
   .reg-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px}
   @media(max-width:760px){.reg-grid{grid-template-columns:repeat(2,1fr)}}
+  #impPanel td:nth-child(4){font-family:var(--mono);text-align:right;font-weight:600;color:var(--ink)}
+  #impPanel td:nth-child(5){text-align:right;font-family:var(--mono)}
   .reg{background:rgba(20,50,65,.04);border:1px solid rgba(20,50,65,.10);border-radius:13px;padding:14px 15px}
   .reg .rl{font-size:10.5px;letter-spacing:.8px;text-transform:uppercase;color:var(--ink-dim);font-weight:600}
   .reg .rv{font-family:var(--mono);font-weight:700;font-size:clamp(16px,2.3vw,20px);color:var(--ink);margin-top:9px}
   .reg .rd{margin-top:8px}
   /* report CTA inside domestic panel */
   .report-cta{display:flex;align-items:center;gap:12px;margin-top:13px;padding-top:14px;border-top:1px solid rgba(20,50,65,.09)}
+  .sentiment{margin-top:13px;padding-top:14px;border-top:1px solid rgba(20,50,65,.09)}
+  .sent-head{font-size:10.5px;letter-spacing:1.3px;text-transform:uppercase;color:var(--ink-faint);font-weight:600;margin-bottom:11px}
+  .sent-date{color:var(--ink-dim);letter-spacing:.3px;text-transform:none;font-weight:500}
+  .sent-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+  .sent-list li{display:flex;align-items:baseline;gap:9px;font-size:13.5px;line-height:1.45;color:var(--ink)}
+  .sent-list .sdot{flex-shrink:0;width:9px;height:9px;border-radius:50%;position:relative;top:3px}
+  .sent-list .smat{font-weight:700;letter-spacing:.3px;margin-right:2px}
   .rc-label{font-size:10.5px;letter-spacing:1.3px;text-transform:uppercase;color:var(--ink-faint);font-weight:600}
   .rc-btns{display:flex;gap:9px;flex:1}
   .rc-btn{flex:1;font-family:inherit;font-weight:700;font-size:13px;letter-spacing:.5px;padding:11px 0;border-radius:10px;cursor:pointer;border:1px solid rgba(20,50,65,.18);background:rgba(20,50,65,.05);color:var(--ink);transition:.18s;display:flex;align-items:center;justify-content:center;gap:7px}
@@ -191,6 +201,83 @@
   .rpt-body p{font-size:13.3px;line-height:1.62;color:#26424f;margin:10px 0}
   .rpt-body .divider{height:1px;background:linear-gradient(90deg,var(--accent),transparent);opacity:.4;margin:16px 0 4px}
   .foot{margin-top:22px;font-size:11px;color:var(--ink-faint);text-align:center;line-height:1.6;letter-spacing:.3px}
+
+  /* ============ RESPONSIVE : TABLET ============ */
+  @media(max-width:820px){
+    .panel{padding:17px 16px;border-radius:14px}
+    .stats{grid-template-columns:repeat(2,1fr);gap:9px}
+    .stat{padding:13px 13px 12px}
+    .stat .big{font-size:clamp(19px,5vw,24px)}
+    .chart-box{height:260px}
+    .daterow{padding:12px;gap:12px}
+    .ctl{flex:1 1 auto}
+    .reg-grid{grid-template-columns:repeat(3,1fr)}
+    .rpt-tabs button{padding:8px 13px;font-size:12.5px}
+  }
+
+  /* ============ RESPONSIVE : PHONE ============ */
+  @media(max-width:560px){
+    body{padding:11px}
+    .masthead{align-items:flex-start;gap:10px;margin-bottom:16px}
+    .title-wrap{gap:10px;width:100%}
+    .masthead h1{font-size:clamp(19px,7vw,26px)}
+    .report-date-wrap{padding:4px 8px 4px 10px}
+    .report-date-wrap select{font-size:12px;max-width:130px}
+    .pdf-btn{padding:8px 12px;font-size:12px}
+    .dateline{text-align:left;width:100%}
+    .legend-note{justify-content:flex-start;flex-wrap:wrap;gap:10px}
+
+    .panel{padding:15px 13px;border-radius:13px}
+    .panel h2{font-size:11.5px;letter-spacing:1.2px;margin-bottom:13px}
+    .section-label{font-size:11.5px;letter-spacing:1.1px}
+
+    /* Daily-average cards: single column, larger touch targets */
+    .stats{grid-template-columns:1fr;gap:8px}
+    .stat{padding:14px 15px}
+    .stat .big{font-size:26px}
+
+    /* Full report + sentiment stack */
+    .report-cta{flex-direction:column;align-items:stretch;gap:9px}
+    .rc-label{margin-bottom:2px}
+    .rc-btns{width:100%}
+    .rc-btn{padding:13px 0;font-size:13px}
+    .sent-list li{font-size:13px}
+
+    /* Chart: taller aspect for readability, controls stack */
+    .chart-head{gap:9px}
+    .chart-head h2{font-size:12px}
+    .chart-box{height:230px}
+    .seg{width:100%;justify-content:flex-start;overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap}
+    .seg button{white-space:nowrap;padding:8px 12px;font-size:12px}
+    .daterow{flex-direction:column;align-items:stretch;padding:12px}
+    .ctl{width:100%}
+    .ctl .row{flex-wrap:wrap}
+
+    /* Table filters full width & scrollable */
+    .tbl-tools{gap:7px}
+    .tblseg{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap}
+    .tblseg button{white-space:nowrap;padding:7px 12px}
+    .viewopts{margin-left:0;width:100%;gap:16px}
+    .search{min-width:0;width:100%}
+
+    /* Regional cards: 2-up, tighter */
+    .reg-grid{grid-template-columns:repeat(2,1fr);gap:9px}
+    .reg{padding:12px 13px}
+    .reg .rv{font-size:clamp(15px,4.5vw,18px)}
+
+    /* Report modal fills screen */
+    .rpt-overlay{padding:0;align-items:flex-end}
+    .rpt-modal{width:100%;max-height:92vh;border-radius:16px 16px 0 0}
+    .rpt-tabs{flex-wrap:wrap}
+
+    .foot{font-size:10.5px;margin-top:18px}
+  }
+
+  /* very narrow phones */
+  @media(max-width:380px){
+    .reg-grid{grid-template-columns:1fr}
+    .stat .big{font-size:24px}
+  }
 </style>
 </head>
 <body>
@@ -218,7 +305,7 @@
   </div>
 
   <div class="grid top">
-    <div class="panel">
+    <div class="panel" style="display:none">
       <div class="panel-head">
         <h2>Market Overview</h2>
         <div class="ov-date-wrap" id="ovDateWrap">
@@ -229,8 +316,8 @@
       <div id="overview"></div>
     </div>
     <div class="panel">
-      <h2>Daily Average</h2>
-      <div class="stats" id="statRow"></div>
+      <h2 style="display:none">Daily Average</h2>
+      <div class="stats" id="statRow" style="display:none"></div>
       <div class="stats-2" style="display:none">
         <div class="stat" style="cursor:default">
           <div class="lbl">Products Changed</div>
@@ -242,6 +329,10 @@
           <div class="big" id="largestBig" style="font-size:22px"></div>
           <div class="note" id="largestNote"></div>
         </div>
+      </div>
+      <div class="sentiment" id="sentimentBox" style="display:none">
+        <div class="sent-head">Daily Sentiment <span class="sent-date" id="sentDate"></span></div>
+        <ul class="sent-list" id="sentList"></ul>
       </div>
       <div class="report-cta">
         <span class="rc-label">Full report</span>
@@ -286,10 +377,11 @@
   </div>
 
   <div class="panel tbl-panel">
-    <div class="chart-head"><h2 style="margin:0" id="tblTitle">Products</h2></div>
+    <div class="chart-head"><h2 style="margin:0" id="tblTitle">Domestic Prices</h2></div>
     <div class="tbl-tools">
       <div class="seg tblseg" id="matSeg">
-        <button data-m="PP" class="on">PP</button>
+        <button data-m="ALL" class="on">All</button>
+        <button data-m="PP">PP</button>
         <button data-m="PE">PE</button>
         <button data-m="PVC">PVC</button>
       </div>
@@ -317,11 +409,35 @@
     </table>
   </div>
 
-  <div class="section-label" style="margin-top:24px">Regional References &middot; $/ton</div>
-  <div class="reg-grid" id="regGrid"></div>
+  <div class="section-label" style="margin-top:24px;display:none">Regional References &middot; $/ton</div>
+  <div class="reg-grid" id="regGrid" style="display:none"></div>
+
+  <div class="panel tbl-panel imp-panel" id="impPanel" style="margin-top:24px">
+    <div class="chart-head"><h2 style="margin:0" id="impTitle">Import Prices</h2></div>
+    <div class="tbl-tools">
+      <div class="seg tblseg" id="impDateSeg"></div>
+      <div class="seg tblseg" id="impMatSeg">
+        <button data-m="ALL" class="on">All</button>
+        <button data-m="PP">PP</button>
+        <button data-m="PE">PE</button>
+        <button data-m="PVC">PVC</button>
+      </div>
+      <input class="search" id="impSearch" placeholder="Search grades&hellip;">
+    </div>
+    <table id="impTable">
+      <thead><tr>
+        <th data-k="product">Grade <span class="ar"></span></th>
+        <th data-k="origin" style="text-align:left">Origin <span class="ar"></span></th>
+        <th data-k="market" style="text-align:left">Market / Price type <span class="ar"></span></th>
+        <th data-k="price" style="text-align:right">Price <span class="ar"></span></th>
+        <th data-k="cmp" style="text-align:right">vs last <span class="ar"></span></th>
+      </tr></thead>
+      <tbody id="impBody"></tbody>
+    </table>
+  </div>
 
   <div class="foot">
-    Domestic prices in VND/kg incl. VAT &middot; regional references in USD/ton CFR/CIF. Daily series sourced from the Vietnam Resin Reports (<span id="footRange">&nbsp;</span>).<br>
+    Domestic prices in VND/kg incl. VAT &middot; regional references &amp; imports in USD/ton CFR/CIF. Daily series sourced from the Vietnam Resin Reports (<span id="footRange">&nbsp;</span>).<br>
     Change colours: <span style="color:var(--dec)">red &#9660;</span> = price fell, <span style="color:var(--inc)">green &#9650;</span> = price rose. Figures are market assessments for reference only.
   </div>
 
@@ -365,10 +481,10 @@ function setupConstants(){
     col:COLMAP[g], title:g, sub:ovsrc[g].sub||'',
     pts:(ovsrc[g].bullets||[])
   }));
-  REGIONAL = (ED.regional||[]).map(r=>({l:r.l, v:r.v, d:r.d, n:r.n}));
+  REGIONAL = (ED.regional||[]).map(r=>({l:r.l, v:r.v, d:r.d}));
 }
 
-let activeGroup=null, sortKey='v', sortDir=-1, overlay=null;
+let activeGroup=null, sortKey='p', sortDir=1, overlay=null;
 let rStart=0, rEnd=0, cmpIdx=0;
 
 /* ---- unified change token builder ---- */
@@ -432,12 +548,126 @@ Object.entries(GROUPS).forEach(([g,o])=>{
 const rg=document.getElementById('regGrid');
 REGIONAL.forEach(r=>{
   const d=document.createElement('div'); d.className='reg';
-  const deltaHtml = (r.d==null || isNaN(Number(r.d))) ? '' :
-    '<div class="rd">'+chgToken(r.d, Math.abs(r.d).toLocaleString('en-US')+' '+(r.n||'vs last'), false)+'</div>';
-  d.innerHTML='<div class="rl">'+r.l+'</div><div class="rv">'+r.v+'</div>'+deltaHtml;
+  d.innerHTML='<div class="rl">'+r.l+'</div><div class="rv">'+r.v+'</div>'+
+    '<div class="rd">'+chgToken(r.d, Math.abs(r.d)+' vs last', false)+'</div>';
   rg.appendChild(d);
 });
+renderImports();
+renderSentiment();
 }
+
+/* ---- daily sentiment ---- */
+function renderSentiment(){
+  const box=document.getElementById('sentimentBox'); if(!box) return;
+  const s=DATA.sentiment;
+  const list=document.getElementById('sentList');
+  if(!s || !s.items || !s.items.length){ box.style.display='none'; return; }
+  box.style.display='';
+  const matColor={PP:'#0070C0',PE:'#C00000',PVC:'#00B050'};
+  document.getElementById('sentDate').textContent = s.date ? '\u00b7 '+s.date : '';
+  list.innerHTML=s.items.map(it=>{
+    const c=matColor[it.mat]||'#0070C0';
+    return '<li><span class="sdot" style="background:'+c+'"></span>'+
+      '<span><span class="smat" style="color:'+c+'">'+it.mat+'</span> \u2014 '+(it.headline||'')+'</span></li>';
+  }).join('');
+}
+let impMat='ALL', impDate=null;
+function impMaterialOf(name){
+  const p=(name||'').toUpperCase();
+  if(p.indexOf('PVC')>=0) return 'PVC';
+  if(p.indexOf('PP')===0) return 'PP';
+  return 'PE';
+}
+function impColor(mat){ return mat==='PP'?'#0070C0':(mat==='PVC'?'#00B050':'#C00000'); }
+function parseDelta(d){
+  if(d==null) return null;
+  const s=String(d).replace(/[^0-9+\-]/g,' ').trim().split(/\s+/)[0];
+  const n=parseInt(s,10);
+  return isNaN(n)?null:n;
+}
+function impDateKey(s){ if(!s) return -1; const p=String(s).split('/'); return (+p[0])*100+(+p[1]); }
+function buildImpDateSeg(){
+  const seg=document.getElementById('impDateSeg'); if(!seg) return;
+  const list=(DATA.imports||[]);
+  const uniq=[...new Set(list.map(im=>im.offerDate).filter(Boolean))].sort((a,b)=>impDateKey(b)-impDateKey(a));
+  if(!uniq.length){ seg.style.display='none'; return; }
+  seg.style.display='';
+  // default to latest
+  if(impDate===null) impDate=(DATA.importLatest||uniq[0]);
+  seg.innerHTML='<button data-d="ALL">All dates</button>'+
+    uniq.map(d=>'<button data-d="'+d+'">'+d+'</button>').join('');
+  seg.querySelectorAll('button').forEach(b=>{
+    b.classList.toggle('on', b.dataset.d===String(impDate));
+    b.onclick=()=>{ impDate=b.dataset.d; renderImports(); };
+  });
+}
+let impSortKey='product', impSortDir=1;
+function impPriceNum(v){
+  if(v==null) return null;
+  const m=String(v).match(/[\d,]+(\.\d+)?/);
+  if(!m) return null;
+  const n=parseFloat(m[0].replace(/,/g,''));
+  return isNaN(n)?null:n;
+}
+function renderImports(){
+  const body=document.getElementById('impBody'); if(!body) return;
+  const list=(DATA.imports||[]);
+  const panel=document.getElementById('impPanel');
+  if(!list.length){ if(panel) panel.style.display='none'; return; }
+  if(panel) panel.style.display='';
+  buildImpDateSeg();
+  document.querySelectorAll('#impDateSeg button').forEach(b=>b.classList.toggle('on',b.dataset.d===String(impDate)));
+  const q=(document.getElementById('impSearch').value||'').trim().toLowerCase();
+  let rows=list.map(im=>({...im, mat:impMaterialOf(im.product)}));
+  if(impDate && impDate!=='ALL') rows=rows.filter(r=>r.offerDate===impDate);
+  if(impMat!=='ALL') rows=rows.filter(r=>r.mat===impMat);
+  if(q) rows=rows.filter(r=>(r.product||'').toLowerCase().includes(q)||(r.origin||'').toLowerCase().includes(q));
+  // sort
+  rows.sort((a,b)=>{
+    let av,bv;
+    if(impSortKey==='price'){ av=impPriceNum(a.price); bv=impPriceNum(b.price); }
+    else if(impSortKey==='cmp'){ av=parseDelta(a.delta); bv=parseDelta(b.delta); }
+    else { av=(a[impSortKey]||'').toLowerCase(); bv=(b[impSortKey]||'').toLowerCase();
+      return av<bv?-impSortDir:av>bv?impSortDir:0; }
+    if(av==null)av=-1e12; if(bv==null)bv=-1e12;
+    return (av-bv)*impSortDir;
+  });
+  body.innerHTML=rows.map(r=>{
+    const c=impColor(r.mat);
+    const dn=parseDelta(r.delta);
+    let cmp='<span class="muted">&mdash;</span>';
+    if(r.delta!=null && String(r.delta).trim()!=='' && String(r.delta)!=='nan'){
+      const arrow = dn==null ? '' : (dn>0?'&#9650; ':(dn<0?'&#9660; ':''));
+      const col = dn==null ? 'var(--ink-dim)' : (dn>0?'var(--inc)':(dn<0?'var(--dec)':'var(--ink-dim)'));
+      cmp='<span style="color:'+col+'">'+arrow+String(r.delta).replace(/^\+/,'+')+'</span>'+
+          (r.cmpNote&&r.cmpNote!=='nan'?'<span class="muted" style="font-size:11px"> ('+r.cmpNote+')</span>':'');
+    }
+    return '<tr><td><span class="tag" style="background:'+c+'"></span>'+
+      '<span style="color:'+c+';font-weight:600">'+(r.product||'')+'</span></td>'+
+      '<td style="color:var(--ink-dim);text-align:left">'+(r.origin||'')+'</td>'+
+      '<td style="color:var(--ink-dim);text-align:left;font-size:12px">'+(r.market||'')+'</td>'+
+      '<td>'+(r.price||'')+'</td>'+
+      '<td>'+cmp+'</td></tr>';
+  }).join('');
+  document.getElementById('impTitle').textContent='Import Prices';
+}
+document.querySelectorAll('#impMatSeg button').forEach(b=>b.onclick=()=>{
+  impMat=b.dataset.m;
+  document.querySelectorAll('#impMatSeg button').forEach(x=>x.classList.toggle('on',x.dataset.m===impMat));
+  renderImports();
+});
+document.getElementById('impSearch').oninput=renderImports;
+document.querySelectorAll('#impTable thead th[data-k]').forEach(th=>{
+  th.style.cursor='pointer';
+  th.onclick=()=>{
+    const k=th.dataset.k;
+    if(impSortKey===k) impSortDir*=-1;
+    else { impSortKey=k; impSortDir=(k==='product'||k==='origin'||k==='market')?1:-1; }
+    document.querySelectorAll('#impTable thead .ar').forEach(a=>a.innerHTML='');
+    const ar=th.querySelector('.ar'); if(ar) ar.innerHTML=impSortDir<0?'&#9660;':'&#9650;';
+    renderImports();
+  };
+});
 
 
 /* ---- chart ---- */
@@ -505,9 +735,11 @@ function computeRow(m){
     vsl:vsl, pw:pct(latest,m.pwBase), ytd:pct(latest,m.ytdBase), yoy:pct(latest,m.yoyBase),
     series:m.series, noToday:false};
 }
-let tblMat='PP', tblSub=null;
+let tblMat='ALL', tblSub=null;
 function currentTableRows(){
-  let metas = DATA.meta[tblMat] ? DATA.meta[tblMat].slice() : [];
+  let metas;
+  if(tblMat==='ALL'){ metas=[].concat(DATA.meta.PP||[], DATA.meta.PE||[], DATA.meta.PVC||[]); }
+  else { metas = DATA.meta[tblMat] ? DATA.meta[tblMat].slice() : []; }
   if(tblSub) metas=metas.filter(m=>m.sub===tblSub);
   return metas;
 }
@@ -551,8 +783,7 @@ function renderTable(){
       '<td>'+sparkSVG(r.series,gc)+'</td></tr>';
   }).join('');
   tbody.querySelectorAll('tr').forEach(tr=>{tr.onclick=()=>{overlay=overlay===tr.dataset.p?null:tr.dataset.p;buildChart();renderTable();};});
-  const label = tblSub ? tblSub : tblMat;
-  document.getElementById('tblTitle').textContent=label+' Products ('+rows.length+')';
+  document.getElementById('tblTitle').textContent='Domestic Prices';
 }
 
 /* ---- group switching (chart subcategory tabs) ---- */
@@ -578,6 +809,7 @@ function syncFilterButtons(){
 function buildSubSeg(){
   // subcategory chips available within the current material
   const seg=document.getElementById('subSeg'); if(!seg) return;
+  if(tblMat==='ALL'){ seg.innerHTML=''; seg.style.display='none'; return; }
   const subs=SUBCAT_ORDER.filter(s=> (DATA.submat&&DATA.submat[s]===tblMat));
   let html='<button data-s="">All grades</button>';
   html+=subs.map(s=>'<button data-s="'+s+'">'+s+'</button>').join('');
@@ -796,14 +1028,14 @@ async function buildPDF(){
     doc.setLineWidth(.2);
     y+=Math.ceil(SUBS.length/3)*(cardH+5)+3;
     F('bold'); doc.setFontSize(10.5); doc.setTextColor(INK[0],INK[1],INK[2]); T('Regional References - $/ton',M,y); y+=5;
-    const REG=(ED.regional||[]).map(r=>[r.l, r.v, r.d, r.n]);
+    const REG=(ED.regional||[]).map(r=>[r.l, r.v, r.d]);
     const rcW=(W-2*M-3*5)/4, rcH=18;
     REG.forEach((r,i)=>{ const cx=M+(i%4)*(rcW+5), cy=y+Math.floor(i/4)*(rcH+5);
       doc.setFillColor(248,250,251); doc.setDrawColor(223,229,233); doc.roundedRect(cx,cy,rcW,rcH,2.5,2.5,'FD');
       F('bold');doc.setFontSize(6.4);doc.setTextColor(FAINT[0],FAINT[1],FAINT[2]);
       T(doc.splitTextToSize(SAFE(r[0]).toUpperCase(),rcW-4),cx+3,cy+5);
       F('bold');doc.setFontSize(10.5);doc.setTextColor(INK[0],INK[1],INK[2]);T(r[1],cx+3,cy+12);
-      if(r[2]!=null) chgCell(r[2],null,cx+rcW-3,cy+16);
+      chgCell(r[2],null,cx+rcW-3,cy+16);
     });
     footer(1);
 
@@ -872,6 +1104,46 @@ async function buildPDF(){
       footer(pageNo++);
     }
 
+    /* ---------- IMPORT PRICES PAGE ---------- */
+    const IMP=(DATA.imports||[]);
+    if(IMP.length){
+      doc.addPage();
+      header('Import Prices - USD/ton', IMP.length+' offers  -  CIF / CFR main port');
+      let yy=46;
+      const cw=[52,40,44,24,22];
+      const heads=['Product','Origin','Market / Price type','Price','vs prior'];
+      const aligns=['l','l','l','r','r'];
+      const totalW=cw.reduce((a,b)=>a+b,0); const x0=M; const rowH=6.6;
+      const xL=[]; let acc=x0; cw.forEach(w=>{xL.push(acc);acc+=w;});
+      const drawHead=()=>{ doc.setFillColor(13,39,51); doc.rect(x0,yy,totalW,7,'F');
+        F('bold'); doc.setFontSize(7); doc.setTextColor(255,255,255);
+        heads.forEach((h,i)=>{ const tx=aligns[i]==='l'?xL[i]+2:xL[i]+cw[i]-2; doc.text(h,tx,yy+4.7,{align:aligns[i]==='l'?'left':'right'}); }); yy+=7; };
+      drawHead();
+      IMP.forEach((im,idx)=>{
+        if(yy>H-16){ footer(pageNo++); doc.addPage(); header('Import Prices (cont)',''); yy=46; drawHead(); }
+        if(idx%2===0){doc.setFillColor(247,250,251);doc.rect(x0,yy,totalW,rowH,'F');}
+        const by=yy+4.4;
+        F('normal'); doc.setFontSize(7); doc.setTextColor(INK[0],INK[1],INK[2]);
+        const clip=(t,w)=>{ let s=SAFE(t||''); while(doc.getTextWidth(s)>w-3 && s.length>3){s=s.slice(0,-1);} return s!==SAFE(t||'')?s.slice(0,-1)+'.':s; };
+        doc.text(clip(im.product,cw[0]),xL[0]+2,by);
+        doc.setTextColor(DIM[0],DIM[1],DIM[2]);
+        doc.text(clip(im.origin,cw[1]),xL[1]+2,by);
+        doc.setFontSize(6.4); doc.text(clip(im.market,cw[2]),xL[2]+2,by); doc.setFontSize(7);
+        doc.setTextColor(INK[0],INK[1],INK[2]); F('bold');
+        doc.text(SAFE(im.price||'-'),xL[3]+cw[3]-2,by,{align:'right'}); F('normal');
+        // delta
+        const draw=String(im.delta==null?'':im.delta);
+        if(draw && draw!=='nan'){
+          const n=parseInt(draw.replace(/[^0-9+\-]/g,' ').trim().split(/\s+/)[0],10);
+          const col = isNaN(n)?DIM:(n>0?[22,160,90]:(n<0?[200,30,45]:DIM));
+          doc.setTextColor(col[0],col[1],col[2]);
+          doc.text(draw,xL[4]+cw[4]-2,by,{align:'right'});
+        } else { doc.setTextColor(DIM[0],DIM[1],DIM[2]); doc.text('-',xL[4]+cw[4]-2,by,{align:'right'}); }
+        yy+=rowH;
+      });
+      footer(pageNo++);
+    }
+
     doc.save('Vietnam_Resin_Report_'+(DATA.dateFile||'latest')+'.pdf');
   }catch(err){ console.error(err); alert('PDF generation failed: '+err.message); }
   finally{ btn.disabled=false; btn.innerHTML=lbl; }
@@ -899,13 +1171,14 @@ function renderAll(){
   activeGroup=SUBCAT_ORDER[0];
   setupConstants();
   rStart=(DATA.chartStart!=null?DATA.chartStart:0); rEnd=NL-1; cmpIdx=NL-2;
-  overlay=null; sortKey='v'; sortDir=-1;
-  tblMat='PP'; tblSub=null;
+  overlay=null; sortKey='p'; sortDir=1;
+  tblMat='ALL'; tblSub=null;
   paintStatic();
   buildSubSeg();
   setupDateControls();
   updRangeLabels(); updCmpHead(); buildChart(); renderTable();
-  const ar=document.querySelector('thead th[data-k="v"] .ar'); if(ar) ar.innerHTML='&#9660;';
+  document.querySelectorAll('thead .ar').forEach(a=>a.innerHTML='');
+  const ar=document.querySelector('thead th[data-k="p"] .ar'); if(ar) ar.innerHTML='&#9650;';
   const md=document.getElementById('mastDate'); if(md) md.textContent=DATA.dateUpper||'';
   const fr=document.getElementById('footRange'); if(fr) fr.textContent=DATA.rangeHuman||'';
   const rs=document.getElementById('rptStamp'); if(rs) rs.textContent='Vietnam Resin Report \u00b7 '+(DATA.dateHuman||'');
